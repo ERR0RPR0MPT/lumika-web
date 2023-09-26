@@ -26,7 +26,7 @@
       <v-card>
         <v-card-title>从本机上传文件</v-card-title>
         <v-file-input label="点此上传"></v-file-input>
-        <v-card-actions>
+        <v-card-actions class="justify-end">
           <v-btn color="primary" @click="acceptDialog1">确定</v-btn>
           <v-btn color="primary" @click="closeDialog1">取消</v-btn>
         </v-card-actions>
@@ -37,7 +37,7 @@
       <v-card>
         <v-card-title>远程URL文件拉取</v-card-title>
         <v-text-field label="请输入URL"></v-text-field>
-        <v-card-actions>
+        <v-card-actions class="justify-end">
           <v-btn color="primary" @click="acceptDialog2">确定</v-btn>
           <v-btn color="primary" @click="closeDialog2">取消</v-btn>
         </v-card-actions>
