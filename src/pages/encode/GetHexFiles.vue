@@ -36,9 +36,7 @@
     <v-dialog v-model="dialogVisible2" max-width="500">
       <v-card>
         <v-card-title>远程URL文件拉取</v-card-title>
-        <v-card-text>
-          在这里放置远程URL拉取文件的表单或内容
-        </v-card-text>
+        <v-text-field label="请输入URL"></v-text-field>
         <v-card-actions>
           <v-btn color="primary" @click="acceptDialog2">确定</v-btn>
           <v-btn color="primary" @click="closeDialog2">取消</v-btn>
