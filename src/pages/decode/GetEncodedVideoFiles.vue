@@ -11,7 +11,7 @@
           min-width="300"
           @click="openDialog1"
         >
-          从哔哩源下载
+          <div class="text-h5">从哔哩源下载</div>
         </v-btn>
       </v-col>
         <v-col cols="auto">
@@ -20,7 +20,7 @@
             min-width="300"
             @click="openDialog2"
           >
-            从本机上传已编码的视频
+            <div class="text-h5">从本机上传已编码的视频</div>
           </v-btn>
         </v-col>
       </v-row>

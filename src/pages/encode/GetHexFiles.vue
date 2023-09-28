@@ -11,7 +11,7 @@
             min-width="300"
             @click="openDialog1"
           >
-            从本机上传文件
+            <div class="text-h5">从本机上传文件</div>
           </v-btn>
         </v-col>
 
@@ -21,7 +21,7 @@
             min-width="300"
             @click="openDialog2"
           >
-            从远程URL拉取文件
+            <div class="text-h5">从远程URL拉取文件</div>
           </v-btn>
         </v-col>
       </v-row>

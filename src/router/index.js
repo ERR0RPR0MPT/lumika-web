@@ -1,5 +1,5 @@
 // Composables
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 
 import Home from '@/pages/Home.vue'
 import DownloadList from '@/pages/DownloadList.vue'
@@ -19,59 +19,60 @@ const routes = [
       {
         path: '/',
         name: 'Home',
-        component: () => Home,
+        component: Home,
       },
       {
         path: '/download-list',
         name: 'DownloadList',
-        component: () => DownloadList,
+        component: DownloadList,
       },
       {
         path: '/file-manager',
         name: 'FileManager',
-        component: () => FileManager,
+        component: FileManager,
       },
       {
         path: '/get-hex-files',
         name: 'GetHexFiles',
-        component: () => GetHexFiles,
+        component: GetHexFiles,
       },
       {
         path: '/encode-tasks-list',
         name: 'EncodeTasksList',
-        component: () => EncodeTasksList,
+        component: EncodeTasksList,
       },
       {
         path: '/upload-to-bili',
         name: 'UploadToBili',
-        component: () => UploadToBili,
+        component: UploadToBili,
       },
       {
         path: '/generate-group-data',
         name: 'GenerateGroupData',
-        component: () => GenerateGroupData,
+        component: GenerateGroupData,
       },
       {
         path: '/get-encoded-video-files',
         name: 'GetEncodedVideoFiles',
-        component: () => GetEncodedVideoFiles,
+        component: GetEncodedVideoFiles,
       },
       {
         path: '/decode-tasks-list',
         name: 'DecodeTasksList',
-        component: () => DecodeTasksList,
+        component: DecodeTasksList,
       },
       {
         path: '/load-group-data',
         name: 'LoadGroupData',
-        component: () => LoadGroupData,
+        component: LoadGroupData,
       },
     ],
   },
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
+  base: "/",
   routes,
 })
 

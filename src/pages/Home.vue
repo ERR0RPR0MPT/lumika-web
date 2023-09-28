@@ -1,7 +1,9 @@
 <template>
   <v-card class="mx-auto" max-width="800">
+    <v-card-title></v-card-title>
+    <v-card-title class="text-h4">Lumika</v-card-title>
+    <v-card-title></v-card-title>
     <v-card-text>
-      <div class="text-h4">Lumika</div>
       <p>
         Lumika 是一个编解码转换工具，用于将任意数据转换为以<strong>视频</strong>形式存储数据。
       </p>
@@ -18,9 +20,6 @@
         经过测试，使用默认配置生成的编码视频经过 B 站压制后仍然能够正常解码，并且能够恢复编码视频的原始文件数据。
       </p>
     </v-card-text>
-  </v-card>
-
-  <v-card class="mx-auto" max-width="800">
     <v-card-title class="headline">安装</v-card-title>
     <v-card-text>
       <p>在开始使用 Lumika 之前，你需要安装 <code>FFmpeg</code> 和 <code>FFprobe</code>。</p>
@@ -30,9 +29,6 @@
       <p><strong>Windows</strong></p>
       <p>你可以在 <a href="https://ffmpeg.org/download.html">FFmpeg</a> 官方网站下载安装包并进行安装。</p>
     </v-card-text>
-  </v-card>
-
-  <v-card class="mx-auto" max-width="800">
     <v-card-title class="headline">教程</v-card-title>
     <v-card-text>
       <p>你可以参考在
