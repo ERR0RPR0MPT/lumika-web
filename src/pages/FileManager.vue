@@ -8,24 +8,19 @@
     <v-card-text>
       <div class="text-h4">文件管理</div>
     </v-card-text>
-<!--    <v-col cols="auto">-->
-<!--      <v-btn prepend-icon="mdi-plus" size="x-large" @click="openDialog">-->
-<!--        添加文件-->
-<!--      </v-btn>-->
-<!--    </v-col>-->
     <v-list lines="three">
-      <v-list-subheader inset>文件夹</v-list-subheader>
+      <v-list-subheader inset>Encode 目录</v-list-subheader>
 
       <v-list-item
-        v-for="folder in folders"
-        :key="folder.title"
-        :title="folder.title"
-        :subtitle="folder.subtitle"
+        v-for="file in encodeFileList"
+        :key="file.filename"
+        :title="file.filename"
+        :subtitle="null"
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="grey-lighten-1">
-            <v-icon color="white">mdi-folder</v-icon>
+          <v-avatar color="blue">
+            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-folder" : "mdi-clipboard-text" }}</v-icon>
           </v-avatar>
         </template>
 
@@ -40,18 +35,18 @@
 
       <v-divider inset></v-divider>
 
-      <v-list-subheader inset>文件</v-list-subheader>
+      <v-list-subheader inset>Decode 目录</v-list-subheader>
 
       <v-list-item
-        v-for="file in files"
-        :key="file.title"
-        :title="file.title"
-        :subtitle="file.subtitle"
+        v-for="file in decodeFileList"
+        :key="file.filename"
+        :title="file.filename"
+        :subtitle="null"
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar :color="'blue'">
-            <v-icon color="white">mdi-clipboard-text</v-icon>
+          <v-avatar color="blue">
+            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-folder" : "mdi-clipboard-text" }}</v-icon>
           </v-avatar>
         </template>
 
@@ -64,112 +59,44 @@
         <!--        </template>-->
       </v-list-item>
     </v-list>
-
-    <v-dialog v-model="dialogVisible" max-width="1000">
-      <v-card elevation="12" class="overflow-y-auto overflow-x-hidden" max-height="93vh">
-        <v-card-title>添加编码任务</v-card-title>
-        <v-card-text>请选择要编码的文件夹</v-card-text>
-
-        <v-list lines="one">
-          <v-list-item
-            v-for="folder in folders"
-            :key="folder.title"
-            :title="folder.title"
-            :subtitle="folder.subtitle"
-            @click="(isAnyFolderSelectedFlag && !folder.selected) ? null : dialogSelectFolder(folder)"
-          >
-            <template v-slot:prepend>
-              <v-avatar color="grey-lighten-1">
-                <v-icon color="white">mdi-folder</v-icon>
-              </v-avatar>
-            </template>
-
-            <template v-slot:append>
-              <v-checkbox v-model="folder.selected"
-                          :disabled="isAnyFolderSelectedFlag && !folder.selected"></v-checkbox>
-            </template>
-          </v-list-item>
-        </v-list>
-
-        <v-card-actions class="justify-end">
-          <v-btn color="primary" @click="acceptDialog">确定</v-btn>
-          <v-btn color="primary" @click="closeDialog">取消</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
   </v-card>
 </template>
 
 <script setup>
 import {ref} from 'vue';
+import axios from "axios";
 
-const dialogVisible = ref(false);
-const openDialog = () => {
-  dialogVisible.value = true;
-};
-const closeDialog = () => {
-  dialogVisible.value = false;
-};
-const acceptDialog = () => {
-  dialogVisible.value = false;
-};
-const dialogSelectFolder = (folder) => {
-  const temp = folder.selected
-  for (let i = 0; i < folders.value.length; i++) {
-    folders.value[i].selected = false;
+const encodeFileList = ref([]);
+const decodeFileList = ref([]);
+const fileTypeComputed = (type) => {
+  if (type === 'file') {
+    return true;
+  } else {
+    return false;
   }
-  folder.selected = !temp;
-  isAnyFolderSelectedFlag.value = !isAnyFolderSelectedFlag.value;
 };
 
-const isAnyFolderSelectedFlag = ref(false);
+const handleDlTaskListData = (data) => {
+  if (encodeFileList.value !== data.encode) {
+    encodeFileList.value = data.encode
+  }
+  if (decodeFileList.value !== data.decode) {
+    decodeFileList.value = data.decode
+  }
+}
 
-const files = ref([
-  {
-    subtitle: 'Sep 20, 2023',
-    title: 'Vacation itinerary',
-  },
-]);
+// 定义函数来获取文件列表数据
+const getFileList = async () => {
+  try {
+    const response = await axios.get('/api/get-file-list');
+    handleDlTaskListData(response.data)
+  } catch (error) {
+    console.error("获取下载任务列表数据失败");
+    console.error(error);
+  }
+};
+getFileList()
 
-const folders = ref([
-  {
-    subtitle: 'Sep 9, 2023',
-    title: 'Photos',
-  },
-  {
-    subtitle: 'Sep 17, 2023',
-    title: 'Recipes',
-  },
-  {
-    subtitle: 'Sep 27, 2023',
-    title: 'Work',
-  },
-  {
-    subtitle: 'Sep 9, 2023',
-    title: 'Photos',
-  },
-  {
-    subtitle: 'Sep 17, 2023',
-    title: 'Recipes',
-  },
-  {
-    subtitle: 'Sep 27, 2023',
-    title: 'Work',
-  },
-  {
-    subtitle: 'Sep 9, 2023',
-    title: 'Photos',
-  },
-  {
-    subtitle: 'Sep 17, 2023',
-    title: 'Recipes',
-  },
-  {
-    subtitle: 'Sep 27, 2023',
-    title: 'Work',
-  },
-]);
 </script>
 
 <style scoped>
