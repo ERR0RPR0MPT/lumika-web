@@ -2,6 +2,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '@/pages/Home.vue'
+import DownloadList from '@/pages/DownloadList.vue'
+import FileManager from '@/pages/FileManager.vue'
 import GetHexFiles from '@/pages/encode/GetHexFiles.vue'
 import EncodeTasksList from '@/pages/encode/EncodeTasksList.vue'
 import UploadToBili from '@/pages/encode/UploadToBili.vue'
@@ -18,6 +20,16 @@ const routes = [
         path: '/',
         name: 'Home',
         component: () => Home,
+      },
+      {
+        path: '/download-list',
+        name: 'DownloadList',
+        component: () => DownloadList,
+      },
+      {
+        path: '/file-manager',
+        name: 'FileManager',
+        component: () => FileManager,
       },
       {
         path: '/get-hex-files',

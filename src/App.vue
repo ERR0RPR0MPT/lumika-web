@@ -11,18 +11,21 @@
           </v-app-bar-title>
           <template v-slot:append>
             <v-btn icon="mdi-brightness-4" @click="toggleTheme"></v-btn>
-            <v-btn icon="mdi-magnify"></v-btn>
-            <v-btn icon="mdi-dots-vertical"></v-btn>
+<!--            <v-btn icon="mdi-magnify"></v-btn>-->
+<!--            <v-btn icon="mdi-dots-vertical"></v-btn>-->
           </template>
         </v-app-bar>
         <v-navigation-drawer
           v-model="drawer"
-          temporary="true"
+          :permanent="isDrawerPermanent"
         >
           <v-list density="compact" nav>
             <v-list-item to="/" prepend-icon="mdi-view-dashboard" title="主页" value="home"></v-list-item>
+            <v-list-item to="/download-list" prepend-icon="mdi-download" title="下载任务列表" value="download-list"></v-list-item>
+            <v-list-item to="/file-manager" prepend-icon="mdi-folder" title="文件管理" value="file-manager"></v-list-item>
+            <v-divider></v-divider>
             <v-list-item>编码区</v-list-item>
-            <v-list-item to="/get-hex-files" prepend-icon="mdi-download" title="拉取文件"
+            <v-list-item to="/get-hex-files" prepend-icon="mdi-file-download" title="拉取文件"
                          value="get-hex-files"></v-list-item>
             <v-list-item to="/encode-tasks-list" prepend-icon="mdi-list-box" title="编码任务列表"
                          value="encode-tasks-list"></v-list-item>
@@ -30,10 +33,11 @@
                          value="upload-to-bili"></v-list-item>
             <v-list-item to="/generate-group-data" prepend-icon="mdi-file-code" title="生成合集码"
                          value="generate-group-data"></v-list-item>
+            <v-divider></v-divider>
             <v-list-item>解码区</v-list-item>
-            <v-list-item to="/get-encoded-video-files" prepend-icon="mdi-download-multiple" title="拉取视频"
+            <v-list-item to="/get-encoded-video-files" prepend-icon="mdi-cloud-download" title="拉取视频"
                          value="get-encoded-video-files"></v-list-item>
-            <v-list-item to="/decode-tasks-list" prepend-icon="mdi-format-list-bulleted" title="解码任务列表"
+            <v-list-item to="/decode-tasks-list" prepend-icon="mdi-list-box" title="解码任务列表"
                          value="decode-tasks-list"></v-list-item>
             <v-list-item to="/load-group-data" prepend-icon="mdi-link-box-variant" title="解析合集码"
                          value="load-group-data"></v-list-item>
@@ -49,10 +53,37 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import {useTheme} from 'vuetify'
 
-const drawer = ref(null);
+const drawer = ref(true); // Drawer 默认显示
+const isDrawerPermanent = ref(false); // 是否固定 Drawer
+
+const handleResize = () => {
+  // 获取当前窗口的宽度
+  const windowWidth = window.innerWidth;
+
+  // 根据宽度设置 Drawer 的固定和可隐藏状态
+  if (windowWidth > 768) {
+    isDrawerPermanent.value = true; // 宽度较大，固定 Drawer
+    drawer.value = true; // 显示 Drawer
+  } else {
+    isDrawerPermanent.value = false; // 宽度较小，可隐藏 Drawer
+    drawer.value = false; // 隐藏 Drawer
+  }
+};
+
+onMounted(() => {
+  // 在组件挂载后绑定 resize 事件
+  window.addEventListener('resize', handleResize);
+  handleResize(); // 初始化时执行一次
+});
+
+onBeforeUnmount(() => {
+  // 在组件销毁前解绑 resize 事件
+  window.removeEventListener('resize', handleResize);
+});
+
 const theme = useTheme()
 
 function toggleTheme() {
