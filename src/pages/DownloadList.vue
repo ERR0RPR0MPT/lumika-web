@@ -8,19 +8,14 @@
     <v-card-text>
       <div class="text-h4">下载列表</div>
     </v-card-text>
-<!--    <v-col cols="auto">-->
-<!--      <v-btn prepend-icon="mdi-plus" size="x-large" @click="openDialog">-->
-<!--        添加任务-->
-<!--      </v-btn>-->
-<!--    </v-col>-->
     <v-list lines="three">
-      <v-list-subheader inset>下载任务</v-list-subheader>
+      <v-list-subheader inset>从URL下载</v-list-subheader>
 
       <v-list-item
         v-for="dl in dllist"
-        :key="dl.title"
-        :title="dl.title"
-        :subtitle="dl.subtitle"
+        :key="dl.uuid"
+        :title="dl.filename"
+        :subtitle="dl.timestamp"
         @click="null"
       >
         <template v-slot:prepend>
@@ -28,87 +23,75 @@
             <v-icon color="white">mdi-download</v-icon>
           </v-avatar>
         </template>
+      </v-list-item>
+      <v-list-subheader inset>从哔哩源下载</v-list-subheader>
 
-        <!--        <template v-slot:append>-->
-        <!--          <v-btn-->
-        <!--            color="grey-lighten-1"-->
-        <!--            icon="mdi-information"-->
-        <!--            variant="text"-->
-        <!--          ></v-btn>-->
-        <!--        </template>-->
+      <v-list-item
+        v-for="bdl in bdllist"
+        :key="bdl.uuid"
+        :title="bdl.resourceId"
+        :subtitle="bdl.timestamp"
+        @click="null"
+      >
+        <template v-slot:prepend>
+          <v-avatar color="grey-lighten-1">
+            <v-icon color="white">mdi-download</v-icon>
+          </v-avatar>
+        </template>
       </v-list-item>
     </v-list>
-
-<!--    <v-dialog v-model="dialogVisible" max-width="1000">-->
-<!--      <v-card elevation="12" class="overflow-y-auto overflow-x-hidden" max-height="93vh">-->
-<!--        <v-card-title>添加编码任务</v-card-title>-->
-<!--        <v-card-text>请选择要编码的文件夹</v-card-text>-->
-
-<!--        <v-list lines="one">-->
-<!--          <v-list-item-->
-<!--            v-for="dl in dllist"-->
-<!--            :key="dl.title"-->
-<!--            :title="dl.title"-->
-<!--            :subtitle="dl.subtitle"-->
-<!--            @click="(isAnydllistelectedFlag && !dl.selected) ? null : dialogSelectDLTask(dl)"-->
-<!--          >-->
-<!--            <template v-slot:prepend>-->
-<!--              <v-avatar color="grey-lighten-1">-->
-<!--                <v-icon color="white">mdi-folder</v-icon>-->
-<!--              </v-avatar>-->
-<!--            </template>-->
-
-<!--            <template v-slot:append>-->
-<!--              <v-checkbox v-model="dl.selected"-->
-<!--                          :disabled="isAnydllistelectedFlag && !dl.selected"></v-checkbox>-->
-<!--            </template>-->
-<!--          </v-list-item>-->
-<!--        </v-list>-->
-
-<!--        <v-card-actions class="justify-end">-->
-<!--          <v-btn color="primary" @click="acceptDialog">确定</v-btn>-->
-<!--          <v-btn color="primary" @click="closeDialog">取消</v-btn>-->
-<!--        </v-card-actions>-->
-<!--      </v-card>-->
-<!--    </v-dialog>-->
 
   </v-card>
 </template>
 
 <script setup>
 import {ref} from 'vue';
+import axios from "axios";
 
-// const dialogVisible = ref(false);
-// const openDialog = () => {
-//   dialogVisible.value = true;
-// };
-// const closeDialog = () => {
-//   dialogVisible.value = false;
-// };
-// const acceptDialog = () => {
-//   dialogVisible.value = false;
-// };
-// const dialogSelectDLTask = (dl) => {
-//   const temp = dl.selected
-//   for (let i = 0; i < dllist.value.length; i++) {
-//     dllist.value[i].selected = false;
-//   }
-//   dl.selected = !temp;
-//   isAnydllistelectedFlag.value = !isAnydllistelectedFlag.value;
-// };
+const rawDlListData = ref([])
+const dllist = ref([]);
+const bdllist = ref([]);
 
-const isAnydllistelectedFlag = ref(false);
+const handleDlTaskListData = (data) => {
+  if (rawDlListData.value === data.data) {
+    return
+  }
+  rawDlListData.value = data.data
+  for (const dl of data.data) {
+    if (dl.type === 'dl') {
+      dllist.value.push({
+        uuid: dl.uuid,
+        type: "dl",
+        timestamp: dl.timestamp,
+        resourceId: dl.resourceId,
+        filename: dl.fileName,
+        progressRate: dl.progressRate,
+      })
+    } else if (dl.type === 'bdl') {
+      bdllist.value.push({
+        uuid: dl.uuid,
+        type: "bdl",
+        timestamp: dl.timestamp,
+        resourceId: dl.resourceId,
+        filename: dl.fileName,
+        progressRate: dl.progressRate,
+      })
+    }
+  }
+}
 
-const dllist = ref([
-  {
-    title: 'test.zip',
-    subtitle: '从URL下载',
-  },
-  {
-    title: 'BV1Kb411W7ZB',
-    subtitle: '从哔哩源下载',
-  },
-]);
+// 定义函数来获取下载任务列表数据
+const getDlTaskList = async () => {
+  try {
+    const response = await axios.get('/api/get-dl-task-list');
+    handleDlTaskListData(response.data)
+  } catch (error) {
+    console.error("获取下载任务列表数据失败");
+    console.error(error);
+  }
+};
+getDlTaskList()
+
 </script>
 
 <style scoped>
