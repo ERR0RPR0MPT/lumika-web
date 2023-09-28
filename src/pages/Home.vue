@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
   <v-card class="mx-auto" max-width="800">
     <v-card-text>
@@ -55,6 +51,10 @@
     </v-card-text>
   </v-card>
 </template>
+
+<script setup>
+
+</script>
 
 <style scoped>
 

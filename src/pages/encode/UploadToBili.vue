@@ -3,7 +3,7 @@
 </script>
 
 <template>
-dutb
+开发中
 </template>
 
 <style scoped>
