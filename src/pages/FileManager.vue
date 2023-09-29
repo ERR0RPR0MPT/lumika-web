@@ -19,14 +19,14 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="blue">
+          <v-avatar color="purple">
             <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-folder" : "mdi-clipboard-text" }}</v-icon>
           </v-avatar>
         </template>
 
         <!--        <template v-slot:append>-->
         <!--          <v-btn-->
-        <!--            color="grey-lighten-1"-->
+        <!--            color="purple"-->
         <!--            icon="mdi-information"-->
         <!--            variant="text"-->
         <!--          ></v-btn>-->
@@ -45,14 +45,14 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="blue">
+          <v-avatar color="purple">
             <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-folder" : "mdi-clipboard-text" }}</v-icon>
           </v-avatar>
         </template>
 
         <!--        <template v-slot:append>-->
         <!--          <v-btn-->
-        <!--            color="grey-lighten-1"-->
+        <!--            color="purple"-->
         <!--            icon="mdi-information"-->
         <!--            variant="text"-->
         <!--          ></v-btn>-->

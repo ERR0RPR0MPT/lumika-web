@@ -23,14 +23,14 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="grey-lighten-1">
+          <v-avatar color="purple">
             <v-icon color="white">mdi-book</v-icon>
           </v-avatar>
         </template>
 
         <!--        <template v-slot:append>-->
         <!--          <v-btn-->
-        <!--            color="grey-lighten-1"-->
+        <!--            color="purple"-->
         <!--            icon="mdi-information"-->
         <!--            variant="text"-->
         <!--          ></v-btn>-->
@@ -52,7 +52,7 @@
             @click="(isAnyFolderSelectedFlag && !task.selected) ? null : dialogSelectFolder(task)"
           >
             <template v-slot:prepend>
-              <v-avatar color="grey-lighten-1">
+              <v-avatar color="purple">
                 <v-icon color="white">mdi-book</v-icon>
               </v-avatar>
             </template>
@@ -95,7 +95,6 @@ const dialogSelectFolder = (task) => {
   task.selected = !temp;
   isAnyFolderSelectedFlag.value = !isAnyFolderSelectedFlag.value;
 };
-
 const isAnyFolderSelectedFlag = ref(false);
 
 const tasks = ref([

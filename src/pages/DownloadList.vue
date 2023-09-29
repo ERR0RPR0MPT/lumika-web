@@ -19,7 +19,7 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="grey-lighten-1">
+          <v-avatar color="purple">
             <v-icon color="white">mdi-download</v-icon>
           </v-avatar>
         </template>
@@ -34,7 +34,7 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="grey-lighten-1">
+          <v-avatar color="purple">
             <v-icon color="white">mdi-download</v-icon>
           </v-avatar>
         </template>
