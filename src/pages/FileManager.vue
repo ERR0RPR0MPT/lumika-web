@@ -20,23 +20,31 @@
       >
         <template v-slot:prepend>
           <v-avatar color="purple">
-            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-folder" : "mdi-clipboard-text" }}</v-icon>
+            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
           </v-avatar>
         </template>
+      </v-list-item>
 
-        <!--        <template v-slot:append>-->
-        <!--          <v-btn-->
-        <!--            color="purple"-->
-        <!--            icon="mdi-information"-->
-        <!--            variant="text"-->
-        <!--          ></v-btn>-->
-        <!--        </template>-->
+      <v-divider inset></v-divider>
+
+      <v-list-subheader inset>Encode 输出目录</v-list-subheader>
+      <v-list-item
+        v-for="file in encodeOutputFileList"
+        :key="file.filename"
+        :title="file.filename"
+        :subtitle="null"
+        @click="null"
+      >
+        <template v-slot:prepend>
+          <v-avatar color="purple">
+            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
+          </v-avatar>
+        </template>
       </v-list-item>
 
       <v-divider inset></v-divider>
 
       <v-list-subheader inset>Decode 目录</v-list-subheader>
-
       <v-list-item
         v-for="file in decodeFileList"
         :key="file.filename"
@@ -46,17 +54,24 @@
       >
         <template v-slot:prepend>
           <v-avatar color="purple">
-            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-folder" : "mdi-clipboard-text" }}</v-icon>
+            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
           </v-avatar>
         </template>
+      </v-list-item>
 
-        <!--        <template v-slot:append>-->
-        <!--          <v-btn-->
-        <!--            color="purple"-->
-        <!--            icon="mdi-information"-->
-        <!--            variant="text"-->
-        <!--          ></v-btn>-->
-        <!--        </template>-->
+      <v-list-subheader inset>Decode 输出目录</v-list-subheader>
+      <v-list-item
+        v-for="file in decodeOutputFileList"
+        :key="file.filename"
+        :title="file.filename"
+        :subtitle="null"
+        @click="null"
+      >
+        <template v-slot:prepend>
+          <v-avatar color="purple">
+            <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
+          </v-avatar>
+        </template>
       </v-list-item>
     </v-list>
   </v-card>
@@ -67,13 +82,11 @@ import {ref} from 'vue';
 import axios from "axios";
 
 const encodeFileList = ref([]);
+const encodeOutputFileList = ref([]);
 const decodeFileList = ref([]);
+const decodeOutputFileList = ref([]);
 const fileTypeComputed = (type) => {
-  if (type === 'file') {
-    return true;
-  } else {
-    return false;
-  }
+  return type === 'file';
 };
 
 const handleDlTaskListData = (data) => {
@@ -82,6 +95,12 @@ const handleDlTaskListData = (data) => {
   }
   if (decodeFileList.value !== data.decode) {
     decodeFileList.value = data.decode
+  }
+  if (encodeOutputFileList.value !== data.encodeOutput) {
+    encodeOutputFileList.value = data.encodeOutput
+  }
+  if (decodeOutputFileList.value !== data.decodeOutput) {
+    decodeOutputFileList.value = data.decodeOutput
   }
 }
 
