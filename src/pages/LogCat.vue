@@ -4,9 +4,9 @@
       <div class="text-h4">日志</div>
     </v-card-text>
     <v-col cols="auto">
-    <v-btn prepend-icon="mdi-refresh" size="x-large" @click="refresh">
-      刷新
-    </v-btn>
+      <v-btn prepend-icon="mdi-refresh" size="x-large" @click="clearLogCat">
+        清空日志
+      </v-btn>
     </v-col>
     <v-container>
       <v-code>
@@ -18,7 +18,7 @@
 
 <script setup>
 import axios from "axios";
-import {ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 
 const logCatString = ref("")
 
@@ -38,11 +38,35 @@ const getLogCat = async () => {
     console.error(error);
   }
 };
-getLogCat();
+
+const clearLogCat = async () => {
+  try {
+    const response = await axios.get('/api/clear-logcat');
+    console.log("清空 LogCat 数据成功");
+    console.log(response.data);
+  } catch (error) {
+    console.error("清空 LogCat 数据失败");
+    console.error(error);
+  }
+};
 
 const refresh = () => {
   getLogCat();
 };
+
+let refreshTimer = null;
+
+// 在组件创建时启动计时器
+onMounted(() => {
+  refresh(); // 首次立即获取数据
+  refreshTimer = setInterval(refresh, 500); // 每隔 500ms 调用一次 fetchData
+});
+
+// 在组件销毁之前清除计时器
+onBeforeUnmount(() => {
+  clearInterval(refreshTimer);
+});
+
 </script>
 
 <style scoped>

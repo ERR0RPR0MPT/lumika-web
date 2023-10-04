@@ -11,8 +11,8 @@
           </v-app-bar-title>
           <template v-slot:append>
             <v-btn icon="mdi-brightness-4" @click="toggleTheme"></v-btn>
-<!--            <v-btn icon="mdi-magnify"></v-btn>-->
-<!--            <v-btn icon="mdi-dots-vertical"></v-btn>-->
+            <!--            <v-btn icon="mdi-magnify"></v-btn>-->
+            <!--            <v-btn icon="mdi-dots-vertical"></v-btn>-->
           </template>
         </v-app-bar>
         <v-navigation-drawer
@@ -21,28 +21,26 @@
         >
           <v-list density="compact" nav>
             <v-list-item to="/" prepend-icon="mdi-view-dashboard" title="主页" value="home"></v-list-item>
-            <v-list-item to="/download-list" prepend-icon="mdi-download" title="下载任务列表" value="download-list"></v-list-item>
-            <v-list-item to="/file-manager" prepend-icon="mdi-folder" title="文件管理" value="file-manager"></v-list-item>
+            <v-list-item to="/download-list" prepend-icon="mdi-download" title="下载任务列表"
+                         value="download-list"></v-list-item>
+            <v-list-item to="/file-manager" prepend-icon="mdi-folder" title="文件管理"
+                         value="file-manager"></v-list-item>
+            <v-list-item to="/logcat" prepend-icon="mdi-clipboard-text" title="日志"
+                         value="logcat"></v-list-item>
             <v-divider></v-divider>
             <v-list-item>编码区</v-list-item>
-            <v-list-item to="/get-hex-files" prepend-icon="mdi-file-download" title="拉取文件"
-                         value="get-hex-files"></v-list-item>
             <v-list-item to="/encode-tasks-list" prepend-icon="mdi-list-box" title="编码任务列表"
                          value="encode-tasks-list"></v-list-item>
             <v-list-item to="/upload-to-bili" prepend-icon="mdi-cloud-upload" title="上传到哔哩源"
                          value="upload-to-bili"></v-list-item>
-            <v-list-item to="/generate-group-data" prepend-icon="mdi-file-code" title="生成合集码"
+            <v-list-item to="/generate-group-data" prepend-icon="mdi-qrcode" title="生成合集码"
                          value="generate-group-data"></v-list-item>
             <v-divider></v-divider>
             <v-list-item>解码区</v-list-item>
-            <v-list-item to="/get-encoded-video-files" prepend-icon="mdi-cloud-download" title="拉取视频"
-                         value="get-encoded-video-files"></v-list-item>
             <v-list-item to="/decode-tasks-list" prepend-icon="mdi-list-box" title="解码任务列表"
                          value="decode-tasks-list"></v-list-item>
-            <v-list-item to="/load-group-data" prepend-icon="mdi-link-box-variant" title="解析合集码"
+            <v-list-item to="/load-group-data" prepend-icon="mdi-qrcode-scan" title="解析合集码"
                          value="load-group-data"></v-list-item>
-            <v-list-item to="/logcat" prepend-icon="mdi-link-box-variant" title="日志"
-                         value="logcat"></v-list-item>
           </v-list>
           <v-divider></v-divider>
         </v-navigation-drawer>
