@@ -4,6 +4,7 @@ import {createRouter, createWebHashHistory} from 'vue-router'
 import Home from '@/pages/Home.vue'
 import DownloadList from '@/pages/DownloadList.vue'
 import FileManager from '@/pages/FileManager.vue'
+import LogCat from '@/pages/LogCat.vue'
 import GetHexFiles from '@/pages/encode/GetHexFiles.vue'
 import EncodeTasksList from '@/pages/encode/EncodeTasksList.vue'
 import UploadToBili from '@/pages/encode/UploadToBili.vue'
@@ -65,6 +66,11 @@ const routes = [
         path: '/load-group-data',
         name: 'LoadGroupData',
         component: LoadGroupData,
+      },
+      {
+        path: '/logcat',
+        name: 'LogCat',
+        component: LogCat,
       },
     ],
   },

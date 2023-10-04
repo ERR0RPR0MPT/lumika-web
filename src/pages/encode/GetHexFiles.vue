@@ -30,6 +30,7 @@
         <v-card>
           <v-card-title>从本机上传文件</v-card-title>
           <v-file-input label="点此上传" ref="fileInput" multiple></v-file-input>
+          <v-progress-linear v-if="uploadProgress > 0 && uploadProgress <= 100" :model-value="uploadProgress" color="primary"></v-progress-linear>
           <v-card-actions class="justify-end">
             <v-btn color="primary" @click="handleEncodeFileUpload">确定</v-btn>
             <v-btn color="primary" @click="closeDialog1">取消</v-btn>
@@ -42,7 +43,7 @@
           <v-card-title>远程URL文件拉取</v-card-title>
           <v-text-field label="请输入URL地址" v-model="URLInputData"></v-text-field>
           <v-text-field label="请输入自定义文件名(可为空)" v-model="FileNameInputData"></v-text-field>
-          <v-checkbox label="使用单线程下载(适用于不支持多线程分段下载的地址)" v-model="UseSingleThreadToDownloadInputData"></v-checkbox>
+          <v-text-field label="请输入线程数(默认为8)" v-model="DownloadThreadNumInputData"></v-text-field>
           <v-card-actions class="justify-end">
             <v-btn color="primary" @click="handleSendURLData">确定</v-btn>
             <v-btn color="primary" @click="closeDialog2">取消</v-btn>
@@ -81,7 +82,9 @@ const snackbarFlag = ref(false)
 const snackbarText = ref("")
 const URLInputData = ref("")
 const FileNameInputData = ref("")
-const UseSingleThreadToDownloadInputData = ref(false)
+const DownloadThreadNumInputData = ref("")
+
+const uploadProgress = ref(0);
 
 const openDialog1 = () => {
   dialogVisible1.value = true;
@@ -112,6 +115,13 @@ const handleEncodeFileUpload = () => {
 
   let files = Array.from(fileInput.value.files);
 
+  axios.interceptors.request.use(config => {
+    config.onUploadProgress = function (event) {
+      uploadProgress.value = Math.round((event.loaded * 100) / event.total);
+    };
+    return config;
+  });
+
   uploadEncodeFiles(files)
     .then(response => {
       console.log("上传成功")
@@ -120,6 +130,7 @@ const handleEncodeFileUpload = () => {
       snackbarFlag.value = true;
       dialogVisible1.value = false;
       fileInput.value = null;
+      uploadProgress.value = 0;
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
@@ -129,6 +140,7 @@ const handleEncodeFileUpload = () => {
       console.error(error);
       snackbarText.value = "上传失败";
       snackbarFlag.value = true;
+      uploadProgress.value = 0;
       fileInput.value = null;
       setTimeout(() => {
         snackbarFlag.value = false;
@@ -149,7 +161,7 @@ const handleSendURLData = () => {
   const formData = new FormData();
   formData.append('url', URLInputData.value);
   formData.append('fileName', FileNameInputData.value);
-  formData.append("useSingleThreadToDownload", UseSingleThreadToDownloadInputData.value)
+  formData.append("DownloadThreadNumInputData", DownloadThreadNumInputData.value)
 
   axios.post('/api/get-file-from-url', formData, {
     headers: {

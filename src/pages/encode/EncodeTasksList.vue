@@ -20,12 +20,13 @@
       <v-list-item
         v-for="task in encodeTaskList"
         :key="task.uuid"
-        :title="task.taskInfo.fileNameList[0] + ' - 进度: ' + (Math.floor(task.progressRate / task.taskInfo.defaultM * 100)).toString() + '%'"
+        :title="task.taskInfo.fileNameList[0] + ' - 进度: ' + (Math.floor(task.progressNum / task.taskInfo.defaultM * 100)).toString() + '% ' + task.status"
         :subtitle="task.timestamp + ' UUID: ' + task.uuid"
         @click="showTaskDetails(task)"
       >
+        <v-progress-linear color="primary" :model-value="task.progressNum"></v-progress-linear>
         <template v-slot:prepend>
-          <v-avatar color="purple">
+          <v-avatar color="primary">
             <v-icon color="white">mdi-book</v-icon>
           </v-avatar>
         </template>
@@ -45,7 +46,7 @@
 
         <v-list lines="one">
           <v-list-item
-            v-for="file in encodeFileList"
+            v-for="file in encodeFileListTemp"
             :key="file.filename"
             :title="file.filename"
             :subtitle="null"
@@ -53,7 +54,7 @@
             @click="toggleSelection(file)"
           >
             <template v-slot:prepend>
-              <v-avatar color="purple">
+              <v-avatar color="primary">
                 <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
               </v-avatar>
             </template>
@@ -93,7 +94,7 @@
     <v-dialog v-model="childDialogVisible" max-width="1000">
       <v-card elevation="12" class="overflow-y-auto overflow-x-hidden" max-height="93vh">
         <v-card-title>详细信息</v-card-title>
-        <v-table>
+        <v-table class="max-width-table">
           <thead>
           <tr>
             <th class="text-left">
@@ -110,8 +111,16 @@
             <td>{{ selectedTask.uuid }}</td>
           </tr>
           <tr>
+            <td>状态</td>
+            <td>{{ selectedTask.status }}</td>
+          </tr>
+          <tr>
+            <td>状态信息</td>
+            <td>{{ selectedTask.statusMsg }}</td>
+          </tr>
+          <tr>
             <td>进度</td>
-            <td>{{ (Math.floor(selectedTask.progressRate / selectedTask.taskInfo.defaultM * 100)).toString() + "%" }}</td>
+            <td>{{ (Math.floor(selectedTask.progressNum / selectedTask.taskInfo.defaultM * 100)).toString() + "%" }}</td>
           </tr>
           <tr>
             <td>文件名</td>
@@ -167,7 +176,13 @@
           </tr>
           <tr>
             <td>运行日志</td>
-            <td>{{ selectedTask.logCat }}</td>
+            <td>
+              <v-container>
+                <v-code>
+                  <pre>{{ selectedTask.logCat }}</pre>
+                </v-code>
+              </v-container>
+            </td>
           </tr>
           </tbody>
         </v-table>
@@ -196,11 +211,12 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import axios from "axios";
 
 const encodeTaskList = ref([]);
 const encodeFileList = ref([]);
+const encodeFileListTemp = ref([]);
 const dialogVisible = ref(false);
 const childDialogVisible = ref(false);
 const selectedTask = ref(null);
@@ -232,10 +248,6 @@ const toggleSelection = (file) => {
   }
 }
 
-// const replaceBrString = (a) => {
-//   return a.split("\n").join("</br>")
-// }
-
 const showTaskDetails = (task) => {
   refreshList();
   selectedTask.value = task;
@@ -247,6 +259,7 @@ const hideTaskDetails = () => {
 }
 
 const openDialog = () => {
+  encodeFileListTemp.value = encodeFileList.value;
   dialogVisible.value = true;
 };
 const closeDialog = () => {
@@ -315,6 +328,7 @@ const handleSendEncodeTaskData = () => {
       snackbarText.value = "已添加编码任务";
       snackbarFlag.value = true;
       dialogVisible.value = false;
+      selectedItems.value = [];
       MInputData.value = "";
       KInputData.value = "";
       MGInputData.value = "";
@@ -343,7 +357,6 @@ const handleSendEncodeTaskData = () => {
 
 // 定义函数来获取文件列表数据
 const handleFileListData = (data) => {
-  // 遍历文件列表，去除 file 类型
   data.encode = data.encode.filter(item => item.type === "file");
   if (encodeFileList.value !== data.encode) {
     encodeFileList.value = data.encode
@@ -382,8 +395,24 @@ const refreshList = () => {
   getTaskList();
 };
 
+let refreshTimer = null;
+
+// 在组件创建时启动计时器
+onMounted(() => {
+  refreshList(); // 首次立即获取数据
+  refreshTimer = setInterval(refreshList, 1000); // 每隔一秒调用一次 fetchData
+});
+
+// 在组件销毁之前清除计时器
+onBeforeUnmount(() => {
+  clearInterval(refreshTimer);
+});
 </script>
 
 <style scoped>
-
+.max-width-table {
+  max-width: 100%; /* 设置表格最大宽度 */
+  width: 100%; /* 设置表格宽度为 100% */
+  table-layout: fixed; /* 固定表格布局 */
+}
 </style>

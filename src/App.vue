@@ -41,6 +41,8 @@
                          value="decode-tasks-list"></v-list-item>
             <v-list-item to="/load-group-data" prepend-icon="mdi-link-box-variant" title="解析合集码"
                          value="load-group-data"></v-list-item>
+            <v-list-item to="/logcat" prepend-icon="mdi-link-box-variant" title="日志"
+                         value="logcat"></v-list-item>
           </v-list>
           <v-divider></v-divider>
         </v-navigation-drawer>

@@ -19,7 +19,7 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="purple">
+          <v-avatar color="primary">
             <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
           </v-avatar>
         </template>
@@ -36,7 +36,7 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="purple">
+          <v-avatar color="primary">
             <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
           </v-avatar>
         </template>
@@ -53,7 +53,7 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="purple">
+          <v-avatar color="primary">
             <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
           </v-avatar>
         </template>
@@ -68,7 +68,7 @@
         @click="null"
       >
         <template v-slot:prepend>
-          <v-avatar color="purple">
+          <v-avatar color="primary">
             <v-icon color="white">{{ fileTypeComputed(file.type) ? "mdi-file" : "mdi-folder" }}</v-icon>
           </v-avatar>
         </template>
