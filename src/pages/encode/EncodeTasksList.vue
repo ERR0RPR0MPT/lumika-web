@@ -20,7 +20,7 @@
       <v-list-item
         v-for="task in encodeTaskList"
         :key="task.uuid"
-        :title="task.taskInfo.fileNameList[0] + ' - 进度: ' + (Math.floor(task.progressNum / task.taskInfo.defaultM * 100)).toString() + '% ' + task.status"
+        :title="task.taskInfo.fileNameList[0] + ' - 进度: ' + Math.floor(task.progressNum) + '% ' + task.status"
         :subtitle="task.timestamp + ' UUID: ' + task.uuid"
         @click="showTaskDetails(task)"
       >
@@ -142,7 +142,7 @@
             <tr>
               <td>进度</td>
               <td>{{
-                  (Math.floor(selectedTask.progressNum / selectedTask.taskInfo.defaultM * 100)).toString() + "%"
+                  Math.floor(selectedTask.progressNum) + "%"
                 }}
               </td>
             </tr>

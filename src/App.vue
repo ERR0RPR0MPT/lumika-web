@@ -22,6 +22,12 @@
           <v-list density="compact" nav>
             <v-list-item to="/" prepend-icon="mdi-view-dashboard" title="主页" value="home"></v-list-item>
             <v-divider></v-divider>
+            <v-list-item>快速开始</v-list-item>
+            <v-list-item to="/load-group-data" prepend-icon="mdi-qrcode-scan" title="解析合集码"
+                         value="load-group-data"></v-list-item>
+            <v-list-item to="/generate-group-data" prepend-icon="mdi-qrcode" title="生成合集码"
+                         value="generate-group-data"></v-list-item>
+            <v-divider></v-divider>
             <v-list-item>基本</v-list-item>
             <v-list-item to="/download-list" prepend-icon="mdi-download" title="下载列表"
                          value="download-list"></v-list-item>
@@ -31,16 +37,12 @@
             <v-list-item>编码区</v-list-item>
             <v-list-item to="/encode-tasks-list" prepend-icon="mdi-list-box" title="编码列表"
                          value="encode-tasks-list"></v-list-item>
-            <v-list-item to="/generate-group-data" prepend-icon="mdi-qrcode" title="生成合集码"
-                         value="generate-group-data"></v-list-item>
             <v-list-item to="/upload-to-bili" prepend-icon="mdi-cloud-upload" title="上传到哔哩源"
                          value="upload-to-bili"></v-list-item>
             <v-divider></v-divider>
             <v-list-item>解码区</v-list-item>
             <v-list-item to="/decode-tasks-list" prepend-icon="mdi-list-box" title="解码列表"
                          value="decode-tasks-list"></v-list-item>
-            <v-list-item to="/load-group-data" prepend-icon="mdi-qrcode-scan" title="解析合集码"
-                         value="load-group-data"></v-list-item>
             <v-divider></v-divider>
             <v-list-item>高级</v-list-item>
             <v-list-item to="/logcat" prepend-icon="mdi-clipboard-text" title="日志"

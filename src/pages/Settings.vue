@@ -25,15 +25,15 @@
           <tbody>
           <tr>
             <td>CPU 占用</td>
-            <td>{{ status.cpuUsagePercent + '%' }}</td>
+            <td>{{ Math.floor(status.cpuUsagePercent) + '%' }}</td>
           </tr>
           <tr>
             <td>内存占用</td>
-            <td>{{ status.memUsagePercent + '%' }}</td>
+            <td>{{ Math.floor(status.memUsagePercent) + '%' }}</td>
           </tr>
           <tr>
             <td>磁盘占用</td>
-            <td>{{ status.diskUsagePercent + '%' }}</td>
+            <td>{{ Math.floor(status.diskUsagePercent) + '%' }}</td>
           </tr>
           </tbody>
         </v-table>
