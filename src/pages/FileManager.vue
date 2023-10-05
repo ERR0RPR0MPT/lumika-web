@@ -192,7 +192,7 @@
 
       <template v-slot:actions>
         <v-btn
-          color="red"
+          color="purple"
           variant="text"
           @click="snackbarFlag = false"
         >
@@ -406,7 +406,7 @@ const getFileList = async () => {
     const response = await axios.get('/api/get-file-list');
     handleDlTaskListData(response.data)
   } catch (error) {
-    console.error("获取下载任务列表数据失败");
+    console.error("获取下载列表数据失败");
     console.error(error);
   }
 };

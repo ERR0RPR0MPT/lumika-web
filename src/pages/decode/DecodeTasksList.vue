@@ -6,7 +6,7 @@
     max-width="800"
   >
     <v-card-text>
-      <div class="text-h4">解码任务列表</div>
+      <div class="text-h4">解码列表</div>
     </v-card-text>
     <v-col cols="auto">
       <v-btn prepend-icon="mdi-plus" size="x-large" @click="openDialog">
@@ -86,8 +86,11 @@
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideTaskDetails">
               返回
             </v-btn>
-            <v-btn prepend-icon="mdi-play" size="x-large" @click="pauseGetTask">
+            <v-btn v-if="selectedTask.status !== '已完成' && selectedTask.status !== '执行失败'" prepend-icon="mdi-play" size="x-large" @click="pauseGetTask">
               暂停/执行任务
+            </v-btn>
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteGetTask(selectedTask)">
+              删除任务
             </v-btn>
           </v-col>
           <v-table class="max-width-table">
@@ -158,7 +161,7 @@
 
       <template v-slot:actions>
         <v-btn
-          color="red"
+          color="purple"
           variant="text"
           @click="snackbarFlag = false"
         >
@@ -240,6 +243,36 @@ const pauseGetTask = async () => {
       console.error("执行状态切换失败", error);
       console.error(error);
       snackbarText.value = "执行状态切换失败";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    });
+};
+
+const deleteGetTask = async () => {
+  const formData = new FormData();
+  formData.append('uuid', selectedTask.value.uuid);
+
+  axios.post('/api/delete-get-task', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log("任务已删除", response);
+      console.log(response.data);
+      snackbarText.value = "任务已删除";
+      snackbarFlag.value = true;
+      childDialogVisible.value = false;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error("任务删除失败", error);
+      console.error(error);
+      snackbarText.value = "任务删除失败";
       snackbarFlag.value = true;
       setTimeout(() => {
         snackbarFlag.value = false;
@@ -358,7 +391,7 @@ const getTaskList = async () => {
     const response = await axios.get('/api/get-get-task-list');
     handleAddTaskListData(response.data)
   } catch (error) {
-    console.error("获取编码任务列表数据失败");
+    console.error("获取编码列表数据失败");
     console.error(error);
   }
 };

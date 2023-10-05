@@ -65,6 +65,9 @@
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideURLTaskDetails">
               返回
             </v-btn>
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteDlTask(selectedTask)">
+              删除任务
+            </v-btn>
           </v-col>
           <v-table>
             <thead>
@@ -142,6 +145,9 @@
           <v-col cols="auto">
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideBiliTaskDetails">
               返回
+            </v-btn>
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteBDlTask(selectedTask)">
+              删除任务
             </v-btn>
           </v-col>
           <v-table>
@@ -232,7 +238,7 @@
 
       <template v-slot:actions>
         <v-btn
-          color="red"
+          color="purple"
           variant="text"
           @click="snackbarFlag = false"
         >
@@ -365,7 +371,67 @@ const handleSendAVOrBVData = () => {
         snackbarFlag.value = false;
       }, 5000);
     });
-}
+};
+
+const deleteDlTask = async () => {
+  const formData = new FormData();
+  formData.append('uuid', selectedTask.value.uuid);
+
+  axios.post('/api/delete-dl-task', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log("任务已删除", response);
+      console.log(response.data);
+      snackbarText.value = "任务已删除";
+      snackbarFlag.value = true;
+      childDialogURLVisible.value = false;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error("任务删除失败", error);
+      console.error(error);
+      snackbarText.value = "任务删除失败";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    });
+};
+
+const deleteBDlTask = async () => {
+  const formData = new FormData();
+  formData.append('uuid', selectedTask.value.uuid);
+
+  axios.post('/api/delete-bdl-task', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log("任务已删除", response);
+      console.log(response.data);
+      snackbarText.value = "任务已删除";
+      snackbarFlag.value = true;
+      childDialogBiliVisible.value = false;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error("任务删除失败", error);
+      console.error(error);
+      snackbarText.value = "任务删除失败";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    });
+};
 
 const showURLTaskDetails = (dl) => {
   refreshList();
@@ -395,13 +461,13 @@ const handleDlTaskListData = (data) => {
   }
 }
 
-// 定义函数来获取下载任务列表数据
+// 定义函数来获取下载列表数据
 const getDlTaskList = async () => {
   try {
     const response = await axios.get('/api/get-dl-task-list');
     handleDlTaskListData(response.data)
   } catch (error) {
-    console.error("获取下载任务列表数据失败");
+    console.error("获取下载列表数据失败");
     console.error(error);
   }
 };
