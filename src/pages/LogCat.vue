@@ -59,7 +59,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refresh(); // 首次立即获取数据
-  refreshTimer = setInterval(refresh, 500); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(refresh, 1000); // 每隔 500ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

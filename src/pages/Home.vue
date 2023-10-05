@@ -1,5 +1,10 @@
 <template>
-  <v-card class="mx-auto" max-width="800">
+  <v-card
+    elevation="12"
+    class="mx-auto overflow-y-auto overflow-x-hidden"
+    max-height="93vh"
+    max-width="800"
+  >
     <v-card-title></v-card-title>
     <v-card-title class="text-h4">Lumika</v-card-title>
     <v-card-title></v-card-title>

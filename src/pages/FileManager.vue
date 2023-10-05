@@ -158,6 +158,11 @@
       <v-container>
         <v-card>
           <v-card-title>从本机上传文件</v-card-title>
+          <v-select
+            label="上传到"
+            :items="['encode', 'encodeOutput', 'decode', 'decodeOutput']"
+            v-model="parentDir"
+          ></v-select>
           <v-file-input label="点此上传" ref="fileInput" multiple></v-file-input>
           <v-progress-linear v-if="uploadProgress > 0 && uploadProgress <= 100" :model-value="uploadProgress"
                              color="primary"></v-progress-linear>
@@ -173,6 +178,11 @@
       <v-container>
         <v-card>
           <v-card-title>从本机上传已编码的视频目录</v-card-title>
+          <v-select
+            label="上传到"
+            :items="['encode', 'encodeOutput', 'decode', 'decodeOutput']"
+            v-model="parentDir"
+          ></v-select>
           <v-text-field label="请设置上传的目录名称" v-model="dirNameInput"></v-text-field>
           <v-file-input label="选择目录" ref="dirInput" @change="selectDirectory" webkitdirectory></v-file-input>
           <v-progress-linear v-if="uploadProgress > 0 && uploadProgress <= 100" :model-value="uploadProgress"
@@ -206,8 +216,6 @@
 <script setup>
 import axios from "axios";
 import {onBeforeUnmount, onMounted, ref} from 'vue';
-import {uploadEncodeFiles} from "@/api/UploadEncodeFiles";
-import {uploadDecodeFiles} from "@/api/UploadDecodeVideos";
 
 const dialogVisible1 = ref(false);
 const dialogVisible4 = ref(false);
@@ -223,6 +231,7 @@ const selectedFile = ref(null);
 const childDialogVisible = ref(false);
 const snackbarFlag = ref(false);
 const snackbarText = ref("");
+const parentDir = ref("");
 const fileTypeComputed = (type) => {
   return type === 'file';
 };
@@ -246,12 +255,20 @@ const selectDirectory = () => {
 };
 
 const handleEncodeFileUpload = () => {
+  if (parentDir.value === "") {
+    snackbarText.value = "请选择父目录来存储上传的文件";
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
   if (fileInput.value.files.length === 0) {
     snackbarText.value = "请选择文件";
     snackbarFlag.value = true;
     setTimeout(() => {
       snackbarFlag.value = false;
-    }, 3000);
+    }, 5000);
     return;
   }
 
@@ -264,7 +281,17 @@ const handleEncodeFileUpload = () => {
     return config;
   });
 
-  uploadEncodeFiles(files)
+  const formData = new FormData();
+  formData.append('parentDir', parentDir.value);
+  files.forEach(file => {
+    formData.append('files', file);
+  });
+
+  axios.post('/api/upload/encode', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
     .then(response => {
       console.log("上传成功")
       console.log(response.data);
@@ -291,6 +318,14 @@ const handleEncodeFileUpload = () => {
 };
 
 const handleDecodeFileUpload = () => {
+  if (parentDir.value === "") {
+    snackbarText.value = "请选择父目录来存储上传的文件";
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
   if (dirInput.value.files.length === 0 || dirNameInput.value === "") {
     snackbarText.value = "请选择文件并设置上传目录的名称";
     snackbarFlag.value = true;
@@ -309,7 +344,18 @@ const handleDecodeFileUpload = () => {
     return config;
   });
 
-  uploadDecodeFiles(files, dirNameInput.value)
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('directory', file);
+  });
+  formData.append('folderName', dirNameInput.value);
+  formData.append('parentDir', parentDir.value);
+
+  axios.post('/api/upload/decode', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
     .then(response => {
       console.log("上传成功")
       console.log(response.data);
@@ -416,7 +462,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   getFileList(); // 首次立即获取数据
-  refreshTimer = setInterval(getFileList, 500); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(getFileList, 1000); // 每隔 500ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

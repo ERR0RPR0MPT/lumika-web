@@ -207,6 +207,11 @@
       <v-container>
         <v-card>
           <v-card-title>远程URL文件拉取</v-card-title>
+          <v-select
+            label="下载到"
+            :items="['encode', 'encodeOutput', 'decode', 'decodeOutput']"
+            v-model="parentDir"
+          ></v-select>
           <v-text-field label="请输入URL地址" v-model="URLInputData"></v-text-field>
           <v-text-field label="请输入自定义文件名(可为空)" v-model="FileNameInputData"></v-text-field>
           <v-text-field label="请输入线程数(默认为8)" v-model="DownloadThreadNumInputData"></v-text-field>
@@ -222,6 +227,11 @@
       <v-container>
         <v-card>
           <v-card-title>从哔哩源下载</v-card-title>
+          <v-select
+            label="下载到"
+            :items="['encode', 'encodeOutput', 'decode', 'decodeOutput']"
+            v-model="parentDir"
+          ></v-select>
           <v-text-field label="请输入BV/av号" v-model="AVOrBVInputData"></v-text-field>
           <v-card-actions class="justify-end">
             <v-btn color="primary" @click="handleSendAVOrBVData">确定</v-btn>
@@ -266,6 +276,7 @@ const snackbarFlag = ref(false);
 const snackbarText = ref("");
 const dllist = ref([]);
 const bdllist = ref([]);
+const parentDir = ref("");
 const openDialog2 = () => {
   dialogVisible2.value = true;
 };
@@ -291,6 +302,14 @@ const clearDlTaskList = async () => {
 };
 
 const handleSendURLData = () => {
+  if (parentDir.value === "") {
+    snackbarText.value = "请选择父目录来存储下载的文件";
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
   if (URLInputData.value === "") {
     snackbarText.value = "请输入URL地址";
     snackbarFlag.value = true;
@@ -304,6 +323,7 @@ const handleSendURLData = () => {
   formData.append('url', URLInputData.value);
   formData.append('fileName', FileNameInputData.value);
   formData.append("DownloadThreadNumInputData", DownloadThreadNumInputData.value)
+  formData.append('parentDir', parentDir.value);
 
   axios.post('/api/get-file-from-url', formData, {
     headers: {
@@ -334,6 +354,14 @@ const handleSendURLData = () => {
 };
 
 const handleSendAVOrBVData = () => {
+  if (parentDir.value === "") {
+    snackbarText.value = "请选择父目录来存储下载的文件";
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
   if (AVOrBVInputData.value === "") {
     snackbarText.value = "请输入BV/av号";
     snackbarFlag.value = true;
@@ -345,6 +373,7 @@ const handleSendAVOrBVData = () => {
 
   const formData = new FormData();
   formData.append('bili-id', AVOrBVInputData.value);
+  formData.append('parentDir', parentDir.value);
 
   axios.post('/api/get-encoded-video-files', formData, {
     headers: {
@@ -481,7 +510,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refreshList(); // 首次立即获取数据
-  refreshTimer = setInterval(refreshList, 500); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(refreshList, 1000); // 每隔 500ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器
