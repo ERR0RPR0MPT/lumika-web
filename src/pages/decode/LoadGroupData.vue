@@ -10,8 +10,13 @@
     </v-card-text>
     <v-col cols="auto">
       <v-btn prepend-icon="mdi-sync" size="x-large" @click="loadGroupData">解析</v-btn>
-      <v-btn v-if="base64JsonData !== ''" prepend-icon="mdi-delete-forever" size="x-large" @click="base64JsonData = ''; jsonData = null;">
+      <v-btn v-if="base64JsonData !== ''" prepend-icon="mdi-delete-forever" size="x-large"
+             @click="base64JsonData = ''; jsonData = null;">
         清除
+      </v-btn>
+      <v-btn v-if="base64JsonData !== '' && jsonData !== null" prepend-icon="mdi-arrow-right" size="x-large"
+             @click="sendAllDlTask">
+        发送全部任务到下载列表
       </v-btn>
     </v-col>
     <v-col cols="auto">
@@ -19,7 +24,7 @@
     </v-col>
 
     <v-container v-if="jsonData !== null">
-      <v-card>
+      <v-card elevation="12" max-height="93vh">
         <v-card-title>解析结果</v-card-title>
         <v-col cols="auto">
           <v-table>
@@ -41,27 +46,21 @@
             </tbody>
           </v-table>
         </v-col>
-
-        <v-col cols="auto">
-          <v-table>
-            <thead>
-            <tr>
-              <th class="text-left">
-                BV号
-              </th>
-              <th class="text-left">
-                Base64 配置
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(item, index) in jsonData.groupData" :key="index">
-              <td>{{ item.id }}</td>
-              <td>{{ item.baseStr }}</td>
-            </tr>
-            </tbody>
-          </v-table>
-        </v-col>
+        <v-list lines="three">
+          <v-list-item
+            v-for="(item, index) in jsonData.groupData"
+            :key="index"
+            :title="item.id"
+            :subtitle="item.baseStr"
+            @click="sendDlTask(index, item)"
+          >
+            <template v-slot:prepend>
+              <v-avatar color="primary">
+                <v-icon color="white">mdi-book</v-icon>
+              </v-avatar>
+            </template>
+          </v-list-item>
+        </v-list>
       </v-card>
     </v-container>
 
@@ -84,12 +83,17 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
+import axios from "axios";
 
 const snackbarFlag = ref(false);
 const snackbarText = ref("");
 const base64JsonData = ref("");
 const jsonData = ref(null);
+
+watch(base64JsonData, () => {
+  autoLoadGroupData();
+});
 
 const loadGroupData = () => {
   if (base64JsonData.value === "") {
@@ -101,7 +105,10 @@ const loadGroupData = () => {
     return;
   }
   try {
-    jsonData.value = JSON.parse(atob(base64JsonData.value));
+    const base64String = base64JsonData.value;
+    const decodedData = atob(base64String);
+    const decoder = new TextDecoder();
+    jsonData.value = JSON.parse(decoder.decode(new Uint8Array([...decodedData].map(char => char.charCodeAt(0)))));
     console.log('成功解析配置', jsonData.value);
     console.log(jsonData.value);
     snackbarText.value = "成功解析配置";
@@ -119,25 +126,100 @@ const loadGroupData = () => {
   }
 };
 
-// const copyToClipboard = async (text) => {
-//   try {
-//     await navigator.clipboard.writeText(text);
-//     console.log('内容已成功复制到剪贴板');
-//     snackbarText.value = "内容已成功复制到剪贴板";
-//     snackbarFlag.value = true;
-//     setTimeout(() => {
-//       snackbarFlag.value = false;
-//     }, 3000);
-//   } catch (e) {
-//     console.log(e);
-//     console.error('无法复制内容到剪贴板');
-//     snackbarText.value = "无法复制内容到剪贴板";
-//     snackbarFlag.value = true;
-//     setTimeout(() => {
-//       snackbarFlag.value = false;
-//     }, 5000);
-//   }
-// };
+const autoLoadGroupData = () => {
+  try {
+    const base64String = base64JsonData.value;
+    const decodedData = atob(base64String);
+    const decoder = new TextDecoder();
+    jsonData.value = JSON.parse(decoder.decode(new Uint8Array([...decodedData].map(char => char.charCodeAt(0)))));
+    console.log('成功解析配置', jsonData.value);
+    console.log(jsonData.value);
+    snackbarText.value = "成功解析配置";
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 3000);
+  } catch (e) {
+    console.error('配置解析失败: ' + e.toString());
+    jsonData.value = null;
+  }
+};
+
+const sendDlTask = (index, item) => {
+  if (item.id === "" || item.baseStr === "") {
+    snackbarText.value = "请输入配置正确的合集码";
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('biliId', item.id);
+  formData.append('baseStr', item.baseStr);
+  formData.append('parentDir', "decode");
+
+  axios.post('/api/get-bili-encoded-video-files', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log("已添加第" + index + 1 + "个任务到下载列表", response);
+      console.log(response.data);
+      // 去除已添加的任务
+      jsonData.value.groupData.splice(index, 1);
+      snackbarText.value = "已添加第" + index + 1 + "个任务到下载列表";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error('下载任务创建失败', error);
+      console.error(error);
+      snackbarText.value = "下载任务创建失败";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    });
+};
+
+const sendAllDlTask = () => {
+  // 遍历发送所有任务
+  jsonData.value.groupData.forEach((item, index) => {
+    if (item.id === "" || item.baseStr === "") {
+      console.log("添加第" + index + 1 + "个任务出现错误: 请输入配置正确的合集码");
+      return;
+    }
+    const formData = new FormData();
+    formData.append('biliId', item.id);
+    formData.append('baseStr', item.baseStr);
+    formData.append('parentDir', "decode");
+
+    axios.post('/api/get-bili-encoded-video-files', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(response => {
+        console.log("已添加第" + index + 1 + "个任务到下载列表", response);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('下载任务创建失败', error);
+        console.error(error);
+      });
+  });
+  jsonData.value.groupData = [];
+  snackbarText.value = "已添加所有任务到下载列表";
+  snackbarFlag.value = true;
+  setTimeout(() => {
+    snackbarFlag.value = false;
+  }, 3000);
+}
 
 </script>
 

@@ -12,6 +12,9 @@
       <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="clearDlTaskList">
         清空任务列表
       </v-btn>
+      <v-btn prepend-icon="mdi-arrow-right" size="x-large" @click="sendAllDecodeTask">
+        发送所有已完成任务到解码列表
+      </v-btn>
     </v-col>
     <v-col cols="auto">
       <v-btn prepend-icon="mdi-download" size="x-large" @click="openDialog2">
@@ -39,6 +42,7 @@
           </v-avatar>
         </template>
       </v-list-item>
+
       <v-list-subheader inset>从哔哩源下载</v-list-subheader>
 
       <v-list-item
@@ -65,7 +69,7 @@
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideURLTaskDetails">
               返回
             </v-btn>
-            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteDlTask(selectedTask)">
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteDlTask">
               删除任务
             </v-btn>
           </v-col>
@@ -146,7 +150,11 @@
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideBiliTaskDetails">
               返回
             </v-btn>
-            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteBDlTask(selectedTask)">
+            <v-btn v-if="selectedTask.baseStr !== '' && selectedTask.resourceId !== ''" prepend-icon="mdi-arrow-right"
+                   size="x-large" @click="sendDecodeTask">
+              发送到解码列表
+            </v-btn>
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteBDlTask">
               删除任务
             </v-btn>
           </v-col>
@@ -181,6 +189,10 @@
             <tr>
               <td>BV/av号</td>
               <td>{{ selectedTask.resourceId }}</td>
+            </tr>
+            <tr>
+              <td>Base64 配置</td>
+              <td>{{ selectedTask.baseStr }}</td>
             </tr>
             <tr>
               <td>创建时间</td>
@@ -233,6 +245,7 @@
             v-model="parentDir"
           ></v-select>
           <v-text-field label="请输入BV/av号" v-model="AVOrBVInputData"></v-text-field>
+          <v-text-field label="请输入 Base64 编码配置(可为空)" v-model="baseStrInputData"></v-text-field>
           <v-card-actions class="justify-end">
             <v-btn color="primary" @click="handleSendAVOrBVData">确定</v-btn>
             <v-btn color="primary" @click="closeDialog3">取消</v-btn>
@@ -269,6 +282,7 @@ const URLInputData = ref("")
 const FileNameInputData = ref("")
 const DownloadThreadNumInputData = ref("")
 const AVOrBVInputData = ref("");
+const baseStrInputData = ref("");
 const childDialogURLVisible = ref(false);
 const childDialogBiliVisible = ref(false);
 const selectedTask = ref(null);
@@ -372,10 +386,11 @@ const handleSendAVOrBVData = () => {
   }
 
   const formData = new FormData();
-  formData.append('bili-id', AVOrBVInputData.value);
+  formData.append('biliId', AVOrBVInputData.value);
+  formData.append('baseStr', baseStrInputData.value);
   formData.append('parentDir', parentDir.value);
 
-  axios.post('/api/get-encoded-video-files', formData, {
+  axios.post('/api/get-bili-encoded-video-files', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -432,6 +447,78 @@ const deleteDlTask = async () => {
     });
 };
 
+const sendDecodeTask = () => {
+  if (selectedTask.value.baseStr === "" || selectedTask.value.baseStr === "") {
+    snackbarFlag.value = true;
+    snackbarText.value = "参数错误";
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
+
+  const inputData = {
+    "dirName": selectedTask.value.resourceId,
+    "decodeThread": 0,
+    "baseStr": selectedTask.value.baseStr,
+  }
+
+  axios.post('/api/add-decode-task', inputData)
+    .then(response => {
+      console.log('已添加解码任务', response);
+      console.log(response.data);
+      snackbarText.value = "已添加解码任务";
+      snackbarFlag.value = true;
+      childDialogBiliVisible.value = false;
+      refreshList();
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error('解码任务创建失败', error);
+      console.error(error);
+      snackbarText.value = "解码任务创建失败";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    });
+};
+
+const sendAllDecodeTask = () => {
+  // 遍历所有任务
+  for (let i = 0; i < bdllist.value.length; i++) {
+    const task = bdllist.value[i];
+    if (task.baseStr === "" || task.baseStr === "") {
+      console.log("任务参数错误");
+      continue;
+    }
+
+    const inputData = {
+      "dirName": task.resourceId,
+      "decodeThread": 0,
+      "baseStr": task.baseStr,
+    }
+
+    axios.post('/api/add-decode-task', inputData)
+      .then(response => {
+        console.log('已添加解码任务', response);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('解码任务创建失败', error);
+        console.error(error);
+      });
+  }
+  snackbarText.value = "已添加所有任务到解码列表";
+  snackbarFlag.value = true;
+  refreshList();
+  setTimeout(() => {
+    snackbarFlag.value = false;
+  }, 3000);
+};
+
 const deleteBDlTask = async () => {
   const formData = new FormData();
   formData.append('uuid', selectedTask.value.uuid);
@@ -482,6 +569,20 @@ const hideBiliTaskDetails = () => {
 }
 
 const handleDlTaskListData = (data) => {
+  if (data.dlTaskList !== null) {
+    data.dlTaskList.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
+  if (data.bdlTaskList !== null) {
+    data.bdlTaskList.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
   if (dllist.value !== data.dlTaskList) {
     dllist.value = data.dlTaskList
   }
@@ -510,7 +611,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refreshList(); // 首次立即获取数据
-  refreshTimer = setInterval(refreshList, 1000); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(refreshList, 1000); // 每隔 1000ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

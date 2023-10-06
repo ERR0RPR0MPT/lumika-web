@@ -71,7 +71,7 @@
           </v-list>
 
           <v-card-actions class="justify-end">
-            <v-btn color="primary" @click="handleSendEncodeTaskData">确定</v-btn>
+            <v-btn color="primary" @click="handleSendDecodeTaskData">确定</v-btn>
             <v-btn color="primary" @click="closeDialog">取消</v-btn>
           </v-card-actions>
         </v-card>
@@ -301,7 +301,7 @@ const fileTypeComputed = (type) => {
   return type === 'file';
 };
 
-const handleSendEncodeTaskData = () => {
+const handleSendDecodeTaskData = () => {
   if (selectedItems.value.length === 0) {
     snackbarFlag.value = true;
     snackbarText.value = "请选择一个目录";
@@ -339,9 +339,9 @@ const handleSendEncodeTaskData = () => {
 
   axios.post('/api/add-decode-task', inputData)
     .then(response => {
-      console.log('已添加编码任务', response);
+      console.log('已添加解码任务', response);
       console.log(response.data);
-      snackbarText.value = "已添加编码任务";
+      snackbarText.value = "已添加解码任务";
       snackbarFlag.value = true;
       dialogVisible.value = false;
       selectedItems.value = [];
@@ -353,9 +353,9 @@ const handleSendEncodeTaskData = () => {
       }, 3000);
     })
     .catch(error => {
-      console.error('编码任务创建失败', error);
+      console.error('解码任务创建失败', error);
       console.error(error);
-      snackbarText.value = "编码任务创建失败";
+      snackbarText.value = "解码任务创建失败";
       snackbarFlag.value = true;
       setTimeout(() => {
         snackbarFlag.value = false;
@@ -382,6 +382,13 @@ const getFileList = async () => {
 
 // 定义函数来获取任务列表数据
 const handleAddTaskListData = (data) => {
+  if (data.decodeTaskList !== null) {
+    data.decodeTaskList.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
   if (decodeTaskList.value !== data.decodeTaskList) {
     decodeTaskList.value = data.decodeTaskList;
   }
@@ -406,7 +413,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refreshList(); // 首次立即获取数据
-  refreshTimer = setInterval(refreshList, 1000); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(refreshList, 1000); // 每隔 1000ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

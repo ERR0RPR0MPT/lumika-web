@@ -21,4 +21,5 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-build.bat
+/build.bat
+/run.bat

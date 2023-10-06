@@ -396,6 +396,34 @@ const hideFileDetails = () => {
 }
 
 const handleDlTaskListData = (data) => {
+  if (data.encode !== null) {
+    data.encode.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
+  if (data.decode !== null) {
+    data.decode.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
+  if (data.encodeOutput !== null) {
+    data.encodeOutput.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
+  if (data.decodeOutput !== null) {
+    data.decodeOutput.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
   if (encodeFileList.value !== data.encode) {
     encodeFileList.value = data.encode
   }
@@ -462,7 +490,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   getFileList(); // 首次立即获取数据
-  refreshTimer = setInterval(getFileList, 1000); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(getFileList, 1000); // 每隔 1000ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

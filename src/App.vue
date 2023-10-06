@@ -23,10 +23,10 @@
             <v-list-item to="/" prepend-icon="mdi-view-dashboard" title="主页" value="home"></v-list-item>
             <v-divider></v-divider>
             <v-list-item>快速开始</v-list-item>
-            <v-list-item to="/load-group-data" prepend-icon="mdi-qrcode-scan" title="解析合集码"
-                         value="load-group-data"></v-list-item>
             <v-list-item to="/generate-group-data" prepend-icon="mdi-qrcode" title="生成合集码"
                          value="generate-group-data"></v-list-item>
+            <v-list-item to="/load-group-data" prepend-icon="mdi-qrcode-scan" title="解析合集码"
+                         value="load-group-data"></v-list-item>
             <v-divider></v-divider>
             <v-list-item>基本</v-list-item>
             <v-list-item to="/download-list" prepend-icon="mdi-download" title="下载列表"

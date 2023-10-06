@@ -35,6 +35,18 @@
             <td>磁盘占用</td>
             <td>{{ Math.floor(status.diskUsagePercent) + '%' }}</td>
           </tr>
+          <tr>
+            <td>默认网卡</td>
+            <td>{{ status.networkInterfaceName }}</td>
+          </tr>
+          <tr>
+            <td>上传速度</td>
+            <td>{{ status.uploadSpeed }}</td>
+          </tr>
+          <tr>
+            <td>下载速度</td>
+            <td>{{ status.downloadSpeed }}</td>
+          </tr>
           </tbody>
         </v-table>
       </v-card>
@@ -127,7 +139,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refresh(); // 首次立即获取数据
-  refreshTimer = setInterval(refresh, 3000); // 每隔 3000ms 调用一次 fetchData
+  refreshTimer = setInterval(refresh, 1000); // 每隔 1000ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

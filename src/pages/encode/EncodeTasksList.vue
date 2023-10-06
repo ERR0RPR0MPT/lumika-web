@@ -489,6 +489,13 @@ const deleteAddTask = async () => {
 // 定义函数来获取文件列表数据
 const handleFileListData = (data) => {
   data.encode = data.encode.filter(item => item.type === "file");
+  if (data.encode !== null) {
+    data.encode.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
   if (encodeFileList.value !== data.encode) {
     encodeFileList.value = data.encode
   }
@@ -505,6 +512,13 @@ const getFileList = async () => {
 
 // 定义函数来获取任务列表数据
 const handleAddTaskListData = (data) => {
+  if (data.encodeTaskList !== null) {
+    data.encodeTaskList.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
   if (encodeTaskList.value !== data.encodeTaskList) {
     encodeTaskList.value = data.encodeTaskList;
   }
@@ -529,7 +543,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refreshList(); // 首次立即获取数据
-  refreshTimer = setInterval(refreshList, 1000); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(refreshList, 1000); // 每隔 1000ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

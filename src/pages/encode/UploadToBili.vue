@@ -12,6 +12,9 @@
       <v-btn prepend-icon="mdi-cloud-upload" size="x-large" @click="openDialog">
         添加上传任务
       </v-btn>
+      <v-btn prepend-icon="mdi-cookie" size="x-large" @click="openCookieDialog">
+        获取登录 Cookie
+      </v-btn>
       <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="clearBUlTaskList">
         清空任务列表
       </v-btn>
@@ -20,7 +23,7 @@
       <v-list-item
         v-for="task in bulTaskList"
         :key="task.uuid"
-        :title="task.taskInfo.fileName + ' - 进度: ' + Math.floor(task.progressNum) + '% ' + task.status"
+        :title="task.taskInfo.fileName + ' - ' + (task.bvid !== '' ? task.bvid : '') + ' 进度: ' + Math.floor(task.progressNum) + '% ' + task.status"
         :subtitle="task.timestamp + ' UUID: ' + task.uuid"
         @click="showTaskDetails(task)"
       >
@@ -89,6 +92,30 @@
       </v-container>
     </v-dialog>
 
+    <v-dialog v-model="dialogCookieVisible" max-width="1000">
+      <v-container>
+        <v-card elevation="12" class="overflow-y-auto overflow-x-hidden" max-height="93vh">
+          <v-card-title>获取登录 Cookie</v-card-title>
+          <v-card-text>请先扫描二维码，然后在手机上点击确认登录</v-card-text>
+
+          <v-col cols="auto">
+            <v-btn prepend-icon="mdi-refresh" size="x-large" @click="refreshQRCode">
+              刷新二维码
+            </v-btn>
+          </v-col>
+
+          <v-col cols="auto">
+            <vue-qr v-if="qrCodeURL !== ''" class="qr-code" :text="qrCodeURL" :size="400"/>
+            <v-card-text v-if="qrCodeURL !== ''">当前状态：{{ biliStatus }}</v-card-text>
+          </v-col>
+
+          <v-card-actions class="justify-end">
+            <v-btn color="primary" @click="closeCookieDialog">确定</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-container>
+    </v-dialog>
+
     <v-dialog v-model="childDialogVisible" max-width="1000">
       <v-container>
         <v-card elevation="12" class="overflow-y-auto overflow-x-hidden" max-height="93vh">
@@ -135,6 +162,10 @@
             <tr>
               <td>创建时间</td>
               <td>{{ selectedTask.timestamp }}</td>
+            </tr>
+            <tr>
+              <td>BV号</td>
+              <td>{{ selectedTask.bvid }}</td>
             </tr>
             <tr>
               <td>视频标题</td>
@@ -193,17 +224,23 @@
 
 <script setup>
 import {onBeforeUnmount, onMounted, ref} from 'vue';
+import vueQr from 'vue-qr/src/packages/vue-qr.vue';
 import axios from "axios";
 
 const bulTaskList = ref([]);
 const bulFileList = ref([]);
 const bulFileListTemp = ref([]);
 const dialogVisible = ref(false);
+const dialogCookieVisible = ref(false);
 const childDialogVisible = ref(false);
 const selectedTask = ref(null);
 const snackbarFlag = ref(false);
 const snackbarText = ref("");
 const selectedItems = ref([]);
+
+const qrCodeURL = ref("");
+const qrCodeKey = ref("");
+const biliStatus = ref("");
 
 const titleText = ref("");
 const descriptionText = ref("");
@@ -229,6 +266,76 @@ const toggleSelection = (file) => {
   }
 }
 
+let refreshPollTimer = null;
+
+const refreshQRCode = async () => {
+  try {
+    const response = await axios.get('/api/bilibili/qrcode');
+    qrCodeURL.value = response.data.data.url;
+    qrCodeKey.value = response.data.data.auth_code;
+    refreshPollTimer = setInterval(refreshPollSync, 1000);
+  } catch (e) {
+    console.error("获取登录二维码出错");
+    console.error(e);
+    snackbarFlag.value = true;
+    snackbarText.value = "获取登录二维码出错";
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    console.error(e);
+  }
+}
+
+const refreshPollSync = async () => {
+  try {
+    const response = await axios.get('/api/bilibili/poll/' + qrCodeKey.value);
+    if (response.data.code === 0) {
+      biliStatus.value = "登录成功，请直接添加上传任务即可";
+      SESSDATAText.value = response.data.data.cookie_info.cookies[0].value;
+      biliJctText.value = response.data.data.cookie_info.cookies[1].value;
+      DedeUserIDText.value = response.data.data.cookie_info.cookies[2].value;
+      DedeUserIDckMd5Text.value = response.data.data.cookie_info.cookies[3].value;
+      accessTokenText.value = response.data.data.access_token;
+      saveCookieData();
+      dialogCookieVisible.value = false;
+      snackbarFlag.value = true;
+      snackbarText.value = "登录成功，请直接添加上传任务即可";
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+      refreshList();
+      clearInterval(refreshPollTimer);
+      refreshPollTimer = null;
+    } else if (response.data.code === 86038) {
+      biliStatus.value = "二维码已失效";
+      clearInterval(refreshPollTimer);
+      refreshPollTimer = null;
+    } else if (response.data.code === 86039) {
+      biliStatus.value = "未登录";
+    } else if (response.data.code === 86090) {
+      biliStatus.value = "已扫描，未确认";
+    } else {
+      biliStatus.value = "出现未知错误, code=" + response.data.code;
+    }
+  } catch (e) {
+    console.error("获取登录二维码出错");
+    console.error(e);
+    snackbarFlag.value = true;
+    snackbarText.value = "获取登录二维码出错";
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    console.error(e);
+  }
+}
+
+const checkDialogVisable = () => {
+  if (!dialogCookieVisible.value && refreshPollTimer !== null) {
+    clearInterval(refreshPollTimer);
+    refreshPollTimer = null;
+  }
+}
+
 const showTaskDetails = (task) => {
   refreshList();
   selectedTask.value = task;
@@ -246,6 +353,15 @@ const openDialog = () => {
 };
 const closeDialog = () => {
   dialogVisible.value = false;
+};
+const openCookieDialog = () => {
+  refreshQRCode();
+  dialogCookieVisible.value = true;
+};
+const closeCookieDialog = () => {
+  clearInterval(refreshPollTimer);
+  refreshPollTimer = null;
+  dialogCookieVisible.value = false;
 };
 
 const saveCookieData = () => {
@@ -492,6 +608,13 @@ const deleteBUlTask = async () => {
 
 // 定义函数来获取文件列表数据
 const handleFileListData = (data) => {
+  if (data.encodeOutput !== null) {
+    data.encodeOutput.sort((a, b) => {
+      const timeA = new Date(a.timestamp);
+      const timeB = new Date(b.timestamp);
+      return timeA - timeB;
+    });
+  }
   data.encodeOutput = data.encodeOutput.filter(item => item.type !== "file");
   if (bulFileList.value !== data.encodeOutput) {
     bulFileList.value = data.encodeOutput
@@ -524,6 +647,7 @@ const getTaskList = async () => {
 };
 
 const refreshList = () => {
+  checkDialogVisable();
   getFileList();
   getTaskList();
 };
@@ -533,12 +657,15 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refreshList(); // 首次立即获取数据
-  refreshTimer = setInterval(refreshList, 1000); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(refreshList, 1000); // 每隔 1000ms 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器
 onBeforeUnmount(() => {
   clearInterval(refreshTimer);
+  clearInterval(refreshPollTimer);
+  refreshTimer = null;
+  refreshPollTimer = null;
 });
 </script>
 
