@@ -47,6 +47,10 @@
             <td>下载速度</td>
             <td>{{ status.downloadSpeed }}</td>
           </tr>
+          <tr>
+            <td>Lumika 版本</td>
+            <td>{{ version }}</td>
+          </tr>
           </tbody>
         </v-table>
       </v-card>
@@ -86,12 +90,7 @@ import {useTheme} from "vuetify";
 const status = ref(null);
 const snackbarFlag = ref(false);
 const snackbarText = ref("");
-
-const handleServerStatusData = (data) => {
-  if (status.value !== data.status) {
-    status.value = data.status
-  }
-}
+const version = ref("");
 
 const getServerStatus = async () => {
   try {
@@ -103,6 +102,11 @@ const getServerStatus = async () => {
   }
 };
 
+const handleServerStatusData = (data) => {
+  if (status.value !== data.status) {
+    status.value = data.status
+  }
+}
 const restartServer = async () => {
   try {
     const response = await axios.get('/api/restart-server');
@@ -124,7 +128,24 @@ const restartServer = async () => {
   }
 };
 
+const handleVersionData = (data) => {
+  if (version.value !== data.version) {
+    version.value = data.version;
+  }
+}
+const getVersion = async () => {
+  try {
+    const response = await axios.get('/api/version');
+    handleVersionData(response.data);
+    console.log('成功获取版本号');
+  } catch (error) {
+    console.error("版本号获取失败");
+    console.error(error);
+  }
+};
+
 const refresh = () => {
+  getVersion();
   getServerStatus();
 };
 

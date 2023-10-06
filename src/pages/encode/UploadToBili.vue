@@ -105,7 +105,7 @@
           </v-col>
 
           <v-col cols="auto">
-            <vue-qr v-if="qrCodeURL !== ''" class="qr-code" :text="qrCodeURL" :size="400"/>
+            <vue-qr v-if="qrCodeURL !== ''" class="qr-code" :text="qrCodeURL" :size="280"/>
             <v-card-text v-if="qrCodeURL !== ''">当前状态：{{ biliStatus }}</v-card-text>
           </v-col>
 
