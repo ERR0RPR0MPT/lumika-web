@@ -79,10 +79,28 @@ const handleResize = () => {
   }
 };
 
+const toggleThemeMeta = () => {
+  // 获取已存在的meta标签
+  const metaTag = document.querySelector('meta[name="theme-color"]')
+
+  if (metaTag) {
+    // 修改meta标签的属性值
+    metaTag.setAttribute('content', theme.global.current.value.dark ? '#121212' : '#ffffff') // 设置新的颜色值
+  } else {
+    // 创建meta标签
+    const metaTag = document.createElement('meta')
+    metaTag.setAttribute('name', 'theme-color')
+    metaTag.setAttribute('content', theme.global.current.value.dark ? '#121212' : '#ffffff')
+    document.head.appendChild(metaTag);
+  }
+}
+
 onMounted(() => {
   // 在组件挂载后绑定 resize 事件
   window.addEventListener('resize', handleResize);
   handleResize(); // 初始化时执行一次
+  // 执行一次 meta 标签的添加
+  toggleThemeMeta();
 });
 
 onBeforeUnmount(() => {
@@ -94,5 +112,6 @@ const theme = useTheme()
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+  toggleThemeMeta()
 }
 </script>
