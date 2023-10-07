@@ -166,11 +166,11 @@ const sendDlTask = (index, item) => {
     },
   })
     .then(response => {
-      console.log("已添加第" + index + 1 + "个任务到下载列表", response);
+      console.log("已添加第" + (index + 1) + "个任务到下载列表", response);
       console.log(response.data);
       // 去除已添加的任务
       jsonData.value.groupData.splice(index, 1);
-      snackbarText.value = "已添加第" + index + 1 + "个任务到下载列表";
+      snackbarText.value = "已添加第" + (index + 1) + "个任务到下载列表";
       snackbarFlag.value = true;
       setTimeout(() => {
         snackbarFlag.value = false;
@@ -205,7 +205,7 @@ const sendAllDlTask = () => {
       },
     })
       .then(response => {
-        console.log("已添加第" + index + 1 + "个任务到下载列表", response);
+        console.log("已添加第" + (index + 1) + "个任务到下载列表", response);
         console.log(response.data);
       })
       .catch(error => {

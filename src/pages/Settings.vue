@@ -26,11 +26,12 @@
         </v-btn>
 
         <v-card-text>
-          <v-text-field v-model="maxThreadsText" label="编解码最大线程数" ></v-text-field>
-          <v-text-field v-model="biliDownloadGoRoutinesText" label="从哔哩源下载每P的最大线程数" ></v-text-field>
-          <v-text-field v-model="biliDownloadsMaxQueueNumText" label="从哔哩源下载最大同时下载分P数" ></v-text-field>
-          <v-text-field v-model="taskWorkerGoRoutinesText" label="处理编解码任务的 Worker 数量(此项设置需要重启后端服务生效)" ></v-text-field>
-          <v-text-field v-model="dbCrontabSecondsText" label="数据库保存时间间隔" ></v-text-field>
+          <v-text-field v-model="maxThreadsText" label="编解码最大线程数"></v-text-field>
+          <v-text-field v-model="biliDownloadGoRoutinesText" label="从哔哩源下载每P的最大线程数"></v-text-field>
+          <v-text-field v-model="biliDownloadsMaxQueueNumText" label="从哔哩源下载最大同时下载分P数"></v-text-field>
+          <v-text-field v-model="taskWorkerGoRoutinesText"
+                        label="处理编解码任务的 Worker 数量(此项设置需要重启后端服务生效)"></v-text-field>
+          <v-text-field v-model="dbCrontabSecondsText" label="数据库保存时间间隔"></v-text-field>
         </v-card-text>
 
         <v-btn prepend-icon="mdi-check" size="x-large" @click="setVarSettingsConfig">
@@ -83,8 +84,12 @@ const biliDownloadsMaxQueueNumText = ref("");
 const taskWorkerGoRoutinesText = ref("");
 const dbCrontabSecondsText = ref("");
 
-const restartServer = async () => {
-  await axios.get('/api/restart-server');
+const restartServer = () => {
+  try {
+    axios.get('/api/restart-server');
+  } catch (error) {
+    console.error(error);
+  }
   console.log('重启请求已发送，请检查日志页面是否重启成功');
   snackbarText.value = "重启请求已发送，请检查日志页面是否重启成功";
   snackbarFlag.value = true;

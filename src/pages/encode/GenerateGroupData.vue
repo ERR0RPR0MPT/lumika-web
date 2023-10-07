@@ -53,7 +53,7 @@
           <v-list lines="three">
             <v-list-item
               v-for="task in bulTaskList"
-              :key="task.uuid"
+              :key="task.taskInfo.fileName"
               :title="task.taskInfo.fileName + ' - ' + (task.bvid !== '' ? task.bvid : '') + ' 进度: ' + Math.floor(task.progressNum) + '% ' + task.status"
               :subtitle="task.timestamp + ' UUID: ' + task.uuid"
               @click="acceptBiliDialog(task)"
@@ -85,7 +85,7 @@
           <v-list lines="three">
             <v-list-item
               v-for="task in encodeTaskList"
-              :key="task.uuid"
+              :key="task.taskInfo.fileNameList[0]"
               :title="task.taskInfo.fileNameList[0] + ' - 进度: ' + Math.floor(task.progressNum) + '% ' + task.status"
               :subtitle="task.timestamp + ' UUID: ' + task.uuid"
               @click="acceptTaskDialog(task)"

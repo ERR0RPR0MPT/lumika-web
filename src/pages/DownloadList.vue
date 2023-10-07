@@ -30,7 +30,7 @@
 
       <v-list-item
         v-for="dl in dllist"
-        :key="dl.uuid"
+        :key="dl.fileName"
         :title="dl.fileName + ' - 进度: ' + (Math.floor(dl.progressNum)).toString() + '% ' + dl.status"
         :subtitle="dl.timestamp + ' UUID: ' + dl.uuid"
         @click="showURLTaskDetails(dl)"
@@ -47,7 +47,7 @@
 
       <v-list-item
         v-for="bdl in bdllist"
-        :key="bdl.uuid"
+        :key="bdl.resourceId"
         :title="bdl.resourceId + ' - 进度: ' + (Math.floor(bdl.progressNum)).toString() + '% ' + bdl.status"
         :subtitle="bdl.timestamp + ' UUID: ' + bdl.uuid"
         @click="showBiliTaskDetails(bdl)"
@@ -69,7 +69,7 @@
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideURLTaskDetails">
               返回
             </v-btn>
-            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteDlTask">
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteDlTask(selectedTask.uuid)">
               删除任务
             </v-btn>
           </v-col>
@@ -154,7 +154,7 @@
                    size="x-large" @click="sendDecodeTask">
               发送到解码列表
             </v-btn>
-            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteBDlTask">
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteBDlTask(selectedTask.uuid)">
               删除任务
             </v-btn>
           </v-col>
@@ -417,9 +417,9 @@ const handleSendAVOrBVData = () => {
     });
 };
 
-const deleteDlTask = async () => {
+const deleteDlTask = async (uuid) => {
   const formData = new FormData();
-  formData.append('uuid', selectedTask.value.uuid);
+  formData.append('uuid', uuid);
 
   axios.post('/api/delete-dl-task', formData, {
     headers: {
@@ -465,6 +465,7 @@ const sendDecodeTask = () => {
 
   axios.post('/api/add-decode-task', inputData)
     .then(response => {
+      deleteBDlTask(selectedTask.value.uuid);
       console.log('已添加解码任务', response);
       console.log(response.data);
       snackbarText.value = "已添加解码任务";
@@ -506,6 +507,7 @@ const sendAllDecodeTask = () => {
 
     axios.post('/api/add-decode-task', inputData)
       .then(response => {
+        deleteBDlTask(task.uuid);
         console.log('已添加解码任务', response);
         console.log(response.data);
       })
@@ -522,9 +524,9 @@ const sendAllDecodeTask = () => {
   }, 3000);
 };
 
-const deleteBDlTask = async () => {
+const deleteBDlTask = async (uuid) => {
   const formData = new FormData();
-  formData.append('uuid', selectedTask.value.uuid);
+  formData.append('uuid', uuid);
 
   axios.post('/api/delete-bdl-task', formData, {
     headers: {

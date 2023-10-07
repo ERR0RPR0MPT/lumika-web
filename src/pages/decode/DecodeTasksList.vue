@@ -19,7 +19,7 @@
     <v-list lines="three">
       <v-list-item
         v-for="task in decodeTaskList"
-        :key="task.uuid"
+        :key="task.taskInfo.dirName"
         :title="task.taskInfo.dirName + ' - 进度: ' + (Math.floor(task.progressNum)).toString() + '% ' + task.status"
         :subtitle="task.timestamp + ' UUID: ' + task.uuid"
         @click="showTaskDetails(task)"
@@ -89,7 +89,10 @@
             <v-btn v-if="selectedTask.status !== '已完成' && selectedTask.status !== '执行失败'" prepend-icon="mdi-play" size="x-large" @click="pauseGetTask">
               暂停/执行任务
             </v-btn>
-            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteGetTask(selectedTask)">
+            <v-btn v-if="selectedTask.status === '已完成' && selectedTask.filename !== ''" prepend-icon="mdi-download" size="x-large" @click="openDownloadURL(selectedTask)">
+              下载文件
+            </v-btn>
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteGetTask">
               删除任务
             </v-btn>
           </v-col>
@@ -124,6 +127,10 @@
             <tr>
               <td>解码目录</td>
               <td>{{ selectedTask.taskInfo.dirName }}</td>
+            </tr>
+            <tr v-if="selectedTask.status === '已完成' && selectedTask.filename !== ''">
+              <td>生成文件名</td>
+              <td>{{ selectedTask.filename }}</td>
             </tr>
             <tr>
               <td>创建时间</td>
@@ -199,6 +206,10 @@ const toggleSelection = (file) => {
       selectedItems.value.splice(index, 1); // 从selectedItems数组中移除取消选中的文件
     }
   }
+}
+
+const openDownloadURL = (task) => {
+  window.open("/api/dl/decodeOutput/" + task.filename, '_blank');
 }
 
 const clearGetTaskList = async () => {
