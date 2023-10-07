@@ -6,6 +6,7 @@ import DownloadList from '@/pages/DownloadList.vue'
 import FileManager from '@/pages/FileManager.vue'
 import LogCat from '@/pages/LogCat.vue'
 import Settings from "@/pages/Settings.vue";
+import Resource from "@/pages/Resource.vue";
 import EncodeTasksList from '@/pages/encode/EncodeTasksList.vue'
 import UploadToBili from '@/pages/encode/UploadToBili.vue'
 import GenerateGroupData from '@/pages/encode/GenerateGroupData.vue'
@@ -65,6 +66,11 @@ const routes = [
         path: '/settings',
         name: 'Settings',
         component: Settings,
+      },
+      {
+        path: '/resource',
+        name: 'Resource',
+        component: Resource,
       },
     ],
   },

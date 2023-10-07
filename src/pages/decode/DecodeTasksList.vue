@@ -212,7 +212,7 @@ const clearGetTaskList = async () => {
   } catch (error) {
     console.error("清空任务数据失败");
     console.error(error);
-    snackbarText.value = "清空任务数据失败(当有任务执行时无法清空列表)";
+    snackbarText.value = "清空任务数据失败";
     snackbarFlag.value = true;
     setTimeout(() => {
       snackbarFlag.value = false;

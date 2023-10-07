@@ -12,7 +12,7 @@
       <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="clearDlTaskList">
         清空任务列表
       </v-btn>
-      <v-btn prepend-icon="mdi-arrow-right" size="x-large" @click="sendAllDecodeTask">
+      <v-btn v-if="bdllist !== null && bdllist.length !== 0" prepend-icon="mdi-arrow-right" size="x-large" @click="sendAllDecodeTask">
         发送所有已完成任务到解码列表
       </v-btn>
     </v-col>
@@ -150,7 +150,7 @@
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideBiliTaskDetails">
               返回
             </v-btn>
-            <v-btn v-if="selectedTask.baseStr !== '' && selectedTask.resourceId !== ''" prepend-icon="mdi-arrow-right"
+            <v-btn v-if="selectedTask.baseStr !== '' && selectedTask.resourceId !== '' && selectedTask.status === '已完成'" prepend-icon="mdi-arrow-right"
                    size="x-large" @click="sendDecodeTask">
               发送到解码列表
             </v-btn>
@@ -448,7 +448,7 @@ const deleteDlTask = async () => {
 };
 
 const sendDecodeTask = () => {
-  if (selectedTask.value.baseStr === "" || selectedTask.value.baseStr === "") {
+  if (selectedTask.value.baseStr === "" || selectedTask.value.status !== "已完成") {
     snackbarFlag.value = true;
     snackbarText.value = "参数错误";
     setTimeout(() => {
@@ -490,7 +490,10 @@ const sendAllDecodeTask = () => {
   // 遍历所有任务
   for (let i = 0; i < bdllist.value.length; i++) {
     const task = bdllist.value[i];
-    if (task.baseStr === "" || task.baseStr === "") {
+    if (task.status !== "已完成") {
+      continue;
+    }
+    if (task.baseStr === "") {
       console.log("任务参数错误");
       continue;
     }

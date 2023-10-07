@@ -75,12 +75,18 @@
               <v-text-field label="请输入分区 id(默认: 232)" v-model="tidText"></v-text-field>
               <v-text-field label="请选择上传线路(默认: qn)" v-model="uploadLinesText"></v-text-field>
               <v-text-field label="请输入上传线程数(默认: 10)" v-model="threadsText"></v-text-field>
+              <v-btn prepend-icon="mdi-check" size="x-large" @click="saveDraftData">
+                保存草稿
+              </v-btn>
               <v-card-text>Cookie 设置</v-card-text>
               <v-text-field label="请输入 SESSDATA" v-model="SESSDATAText"></v-text-field>
               <v-text-field label="请输入 bili_jct" v-model="biliJctText"></v-text-field>
               <v-text-field label="请输入 DedeUserID" v-model="DedeUserIDText"></v-text-field>
               <v-text-field label="请输入 DedeUserID__ckMd5" v-model="DedeUserIDckMd5Text"></v-text-field>
               <v-text-field label="请输入 access_token" v-model="accessTokenText"></v-text-field>
+              <v-btn prepend-icon="mdi-check" size="x-large" @click="saveDraftCookieData">
+                保存 Cookie
+              </v-btn>
             </v-card>
           </v-list>
 
@@ -401,18 +407,69 @@ const saveCookieData = () => {
   console.log('Cookie 数据已保存到 localStorage');
 };
 
+const saveDraftData = () => {
+  if (titleText.value !== "") {
+    localStorage.setItem('Lumika_BUl_title', titleText.value);
+  }
+  if (descriptionText.value !== "") {
+    localStorage.setItem('Lumika_BUl_description', descriptionText.value);
+  }
+  if (tagText.value !== "") {
+    localStorage.setItem('Lumika_BUl_tag', tagText.value);
+  }
+  if (tidText.value !== "") {
+    localStorage.setItem('Lumika_BUl_tid', tidText.value);
+  }
+  if (uploadLinesText.value !== "") {
+    localStorage.setItem('Lumika_BUl_uploadLines', uploadLinesText.value);
+  }
+  if (threadsText.value !== "" && threadsText.value !== "null") {
+    localStorage.setItem('Lumika_BUl_threads', threadsText.value);
+  }
+  snackbarFlag.value = true;
+  snackbarText.value = "草稿数据已保存";
+  setTimeout(() => {
+    snackbarFlag.value = false;
+  }, 3000);
+  console.log('草稿数据已保存到 localStorage');
+};
+
+const saveDraftCookieData = () => {
+  if (SESSDATAText.value !== "") {
+    localStorage.setItem('Lumika_BUl_SESSDATA', SESSDATAText.value);
+  }
+  if (biliJctText.value !== "") {
+    localStorage.setItem('Lumika_BUl_bili_jct', biliJctText.value);
+  }
+  if (DedeUserIDText.value !== "") {
+    localStorage.setItem('Lumika_BUl_DedeUserID', DedeUserIDText.value);
+  }
+  if (DedeUserIDckMd5Text.value !== "") {
+    localStorage.setItem('Lumika_BUl_DedeUserIDckMd5', DedeUserIDckMd5Text.value);
+  }
+  if (accessTokenText.value !== "") {
+    localStorage.setItem('Lumika_BUl_access_token', accessTokenText.value);
+  }
+  snackbarFlag.value = true;
+  snackbarText.value = "Cookie 数据已保存";
+  setTimeout(() => {
+    snackbarFlag.value = false;
+  }, 3000);
+  console.log('Cookie 数据已保存到 localStorage');
+};
+
 const loadCookieData = () => {
-  titleText.value = localStorage.getItem('Lumika_BUl_title');
-  descriptionText.value = localStorage.getItem('Lumika_BUl_description');
-  tagText.value = localStorage.getItem('Lumika_BUl_tag');
-  uploadLinesText.value = localStorage.getItem('Lumika_BUl_uploadLines');
-  threadsText.value = localStorage.getItem('Lumika_BUl_threads');
-  tidText.value = localStorage.getItem('Lumika_BUl_tid');
-  SESSDATAText.value = localStorage.getItem('Lumika_BUl_SESSDATA');
-  biliJctText.value = localStorage.getItem('Lumika_BUl_bili_jct');
-  DedeUserIDText.value = localStorage.getItem('Lumika_BUl_DedeUserID');
-  DedeUserIDckMd5Text.value = localStorage.getItem('Lumika_BUl_DedeUserIDckMd5');
-  accessTokenText.value = localStorage.getItem('Lumika_BUl_access_token');
+  titleText.value = localStorage.getItem('Lumika_BUl_title') !== "null" ? localStorage.getItem('Lumika_BUl_title') : "";
+  descriptionText.value = localStorage.getItem('Lumika_BUl_description') !== "null" ? localStorage.getItem('Lumika_BUl_description') : "";
+  tagText.value = localStorage.getItem('Lumika_BUl_tag') !== "null" ? localStorage.getItem('Lumika_BUl_tag') : "";
+  uploadLinesText.value = localStorage.getItem('Lumika_BUl_uploadLines') !== "null" ? localStorage.getItem('Lumika_BUl_uploadLines') : "";
+  threadsText.value = localStorage.getItem('Lumika_BUl_threads') !== "null" ? localStorage.getItem('Lumika_BUl_threads') : "";
+  tidText.value = localStorage.getItem('Lumika_BUl_tid') !== "null" ? localStorage.getItem('Lumika_BUl_tid') : "";
+  SESSDATAText.value = localStorage.getItem('Lumika_BUl_SESSDATA') !== "null" ? localStorage.getItem('Lumika_BUl_SESSDATA') : "";
+  biliJctText.value = localStorage.getItem('Lumika_BUl_bili_jct') !== "null" ? localStorage.getItem('Lumika_BUl_bili_jct') : "";
+  DedeUserIDText.value = localStorage.getItem('Lumika_BUl_DedeUserID') !== "null" ? localStorage.getItem('Lumika_BUl_DedeUserID') : "";
+  DedeUserIDckMd5Text.value = localStorage.getItem('Lumika_BUl_DedeUserIDckMd5') !== "null" ? localStorage.getItem('Lumika_BUl_DedeUserIDckMd5') : "";
+  accessTokenText.value = localStorage.getItem('Lumika_BUl_access_token') !== "null" ? localStorage.getItem('Lumika_BUl_access_token') : "";
   console.log('Cookie 数据已从 localStorage 加载');
 };
 
@@ -568,7 +625,7 @@ const clearBUlTaskList = async () => {
   } catch (error) {
     console.error("清空任务数据失败");
     console.error(error);
-    snackbarText.value = "清空任务数据失败(当有任务执行时无法清空列表)";
+    snackbarText.value = "清空任务数据失败";
     snackbarFlag.value = true;
     setTimeout(() => {
       snackbarFlag.value = false;
