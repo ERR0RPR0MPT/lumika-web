@@ -26,6 +26,7 @@
         </v-btn>
 
         <v-card-text>
+          <v-text-field v-model="apiURLText" label="后端 API 地址"></v-text-field>
           <v-text-field v-model="maxThreadsText" label="编解码最大线程数"></v-text-field>
           <v-text-field v-model="biliDownloadGoRoutinesText" label="从哔哩源下载每P的最大线程数"></v-text-field>
           <v-text-field v-model="biliDownloadsMaxQueueNumText" label="从哔哩源下载最大同时下载分P数"></v-text-field>
@@ -68,6 +69,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../Common.vue";
 import config from '../../package.json';
 import {onMounted, ref} from "vue";
 import {useTheme} from "vuetify";
@@ -78,6 +80,7 @@ const snackbarText = ref("");
 const version = ref("");
 const webVersion = ref("");
 
+const apiURLText = ref("");
 const maxThreadsText = ref("");
 const biliDownloadGoRoutinesText = ref("");
 const biliDownloadsMaxQueueNumText = ref("");
@@ -86,7 +89,7 @@ const dbCrontabSecondsText = ref("");
 
 const restartServer = () => {
   try {
-    axios.get('/api/restart-server');
+    axios.get(GLOBAL.apiURL + '/restart-server');
   } catch (error) {
     console.error(error);
   }
@@ -107,8 +110,9 @@ const handleVarSettingsData = (data) => {
 };
 
 const getVarSettingsConfig = async () => {
+  apiURLText.value = GLOBAL.apiURL;
   try {
-    const response = await axios.get('/api/get-var-settings-config');
+    const response = await axios.get(GLOBAL.apiURL + '/get-var-settings-config');
     handleVarSettingsData(response.data);
   } catch (error) {
     console.error("配置获取失败");
@@ -116,6 +120,7 @@ const getVarSettingsConfig = async () => {
 };
 
 const setDefaultVarSettingsConfig = () => {
+  apiURLText.value = window.location.protocol + '//' + window.location.host + "/api";
   maxThreadsText.value = "8";
   biliDownloadGoRoutinesText.value = "16";
   biliDownloadsMaxQueueNumText.value = "5";
@@ -124,6 +129,8 @@ const setDefaultVarSettingsConfig = () => {
 }
 
 const setVarSettingsConfig = async () => {
+  GLOBAL.apiURL = apiURLText.value;
+  localStorage.setItem('Lumika_API', apiURLText.value);
   const inputData = {
     defaultMaxThreads: parseInt(maxThreadsText.value),
     defaultBiliDownloadGoRoutines: parseInt(biliDownloadGoRoutinesText.value),
@@ -132,7 +139,7 @@ const setVarSettingsConfig = async () => {
     defaultDbCrontabSeconds: parseInt(dbCrontabSecondsText.value),
   };
   try {
-    const response = await axios.post('/api/set-var-settings-config', inputData);
+    const response = await axios.post(GLOBAL.apiURL + '/set-var-settings-config', inputData);
     console.log('配置修改成功');
     console.log(response.data);
     snackbarText.value = "配置修改成功";
@@ -159,7 +166,7 @@ const handleVersionData = (data) => {
 const getVersion = async () => {
   webVersion.value = config.version;
   try {
-    const response = await axios.get('/api/version');
+    const response = await axios.get(GLOBAL.apiURL + '/version');
     handleVersionData(response.data);
   } catch (error) {
     console.error("版本号获取失败");

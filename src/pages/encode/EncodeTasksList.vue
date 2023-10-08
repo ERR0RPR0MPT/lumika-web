@@ -234,6 +234,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../../Common.vue";
 import {onBeforeUnmount, onMounted, ref} from 'vue';
 import axios from "axios";
 
@@ -373,7 +374,7 @@ const handleSendEncodeTaskData = () => {
   }
   selectedItems.value = [];
 
-  axios.post('/api/add-encode-task', inputData)
+  axios.post(GLOBAL.apiURL + '/add-encode-task', inputData)
     .then(response => {
       console.log('已添加编码任务', response);
       console.log(response.data);
@@ -409,7 +410,7 @@ const handleSendEncodeTaskData = () => {
 
 const clearAddTaskList = async () => {
   try {
-    const response = await axios.get('/api/clear-add-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/clear-add-task-list');
     console.log("清空任务数据成功");
     console.log(response.data);
     setTimeout(() => {
@@ -430,7 +431,7 @@ const pauseAddTask = async () => {
   const formData = new FormData();
   formData.append('uuid', selectedTask.value.uuid);
 
-  axios.post('/api/pause-add-task', formData, {
+  axios.post(GLOBAL.apiURL + '/pause-add-task', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -460,7 +461,7 @@ const deleteAddTask = async () => {
   const formData = new FormData();
   formData.append('uuid', selectedTask.value.uuid);
 
-  axios.post('/api/delete-add-task', formData, {
+  axios.post(GLOBAL.apiURL + '/delete-add-task', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -502,7 +503,7 @@ const handleFileListData = (data) => {
 }
 const getFileList = async () => {
   try {
-    const response = await axios.get('/api/get-file-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-file-list');
     handleFileListData(response.data);
   } catch (error) {
     console.error("获取文件列表数据失败");
@@ -525,7 +526,7 @@ const handleAddTaskListData = (data) => {
 }
 const getTaskList = async () => {
   try {
-    const response = await axios.get('/api/get-add-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-add-task-list');
     handleAddTaskListData(response.data)
   } catch (error) {
     console.error("获取编码列表数据失败");

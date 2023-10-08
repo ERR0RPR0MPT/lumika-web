@@ -273,6 +273,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../Common.vue";
 import axios from "axios";
 import {onBeforeUnmount, onMounted, ref} from 'vue';
 
@@ -306,7 +307,7 @@ const closeDialog3 = () => {
 
 const clearDlTaskList = async () => {
   try {
-    const response = await axios.get('/api/clear-dl-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/clear-dl-task-list');
     console.log("清空任务数据成功");
     console.log(response.data);
   } catch (error) {
@@ -339,7 +340,7 @@ const handleSendURLData = () => {
   formData.append("DownloadThreadNumInputData", DownloadThreadNumInputData.value)
   formData.append('parentDir', parentDir.value);
 
-  axios.post('/api/get-file-from-url', formData, {
+  axios.post(GLOBAL.apiURL + '/get-file-from-url', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -390,7 +391,7 @@ const handleSendAVOrBVData = () => {
   formData.append('baseStr', baseStrInputData.value);
   formData.append('parentDir', parentDir.value);
 
-  axios.post('/api/get-bili-encoded-video-files', formData, {
+  axios.post(GLOBAL.apiURL + '/get-bili-encoded-video-files', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -421,7 +422,7 @@ const deleteDlTask = async (uuid) => {
   const formData = new FormData();
   formData.append('uuid', uuid);
 
-  axios.post('/api/delete-dl-task', formData, {
+  axios.post(GLOBAL.apiURL + '/delete-dl-task', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -463,7 +464,7 @@ const sendDecodeTask = () => {
     "baseStr": selectedTask.value.baseStr,
   }
 
-  axios.post('/api/add-decode-task', inputData)
+  axios.post(GLOBAL.apiURL + '/add-decode-task', inputData)
     .then(response => {
       deleteBDlTask(selectedTask.value.uuid);
       console.log('已添加解码任务', response);
@@ -505,7 +506,7 @@ const sendAllDecodeTask = () => {
       "baseStr": task.baseStr,
     }
 
-    axios.post('/api/add-decode-task', inputData)
+    axios.post(GLOBAL.apiURL + '/add-decode-task', inputData)
       .then(response => {
         deleteBDlTask(task.uuid);
         console.log('已添加解码任务', response);
@@ -528,7 +529,7 @@ const deleteBDlTask = async (uuid) => {
   const formData = new FormData();
   formData.append('uuid', uuid);
 
-  axios.post('/api/delete-bdl-task', formData, {
+  axios.post(GLOBAL.apiURL + '/delete-bdl-task', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -599,7 +600,7 @@ const handleDlTaskListData = (data) => {
 // 定义函数来获取下载列表数据
 const getDlTaskList = async () => {
   try {
-    const response = await axios.get('/api/get-dl-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-dl-task-list');
     handleDlTaskListData(response.data)
   } catch (error) {
     console.error("获取下载列表数据失败");

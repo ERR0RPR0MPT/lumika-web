@@ -76,6 +76,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../Common.vue";
 import axios from "axios";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 
@@ -85,7 +86,7 @@ const snackbarText = ref("");
 
 const getServerStatus = async () => {
   try {
-    const response = await axios.get('/api/get-server-status');
+    const response = await axios.get(GLOBAL.apiURL + '/get-server-status');
     handleServerStatusData(response.data);
   } catch (error) {
     console.error("获取 ServerStatus 数据失败");

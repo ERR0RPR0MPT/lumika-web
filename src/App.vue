@@ -59,6 +59,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "./Common.vue";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import {useTheme} from 'vuetify'
 
@@ -95,7 +96,20 @@ const toggleThemeMeta = () => {
   }
 }
 
+const getApiURL = () => {
+  const l = localStorage.getItem('Lumika_API');
+  if (l === "null" || l === null) {
+    const apiUrl = window.location.protocol + '//' + window.location.host + "/api";
+    GLOBAL.apiURL = apiUrl;
+    localStorage.setItem('Lumika_API', apiUrl);
+  } else {
+    GLOBAL.apiURL = localStorage.getItem('Lumika_API');
+  }
+}
+
 onMounted(() => {
+  // 获取后端 API 地址
+  getApiURL();
   // 在组件挂载后绑定 resize 事件
   window.addEventListener('resize', handleResize);
   handleResize(); // 初始化时执行一次

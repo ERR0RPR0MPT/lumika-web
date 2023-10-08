@@ -229,6 +229,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../../Common.vue";
 import {onBeforeUnmount, onMounted, ref} from 'vue';
 import vueQr from 'vue-qr/src/packages/vue-qr.vue';
 import axios from "axios";
@@ -276,7 +277,7 @@ let refreshPollTimer = null;
 
 const refreshQRCode = async () => {
   try {
-    const response = await axios.get('/api/bilibili/qrcode');
+    const response = await axios.get(GLOBAL.apiURL + '/bilibili/qrcode');
     qrCodeURL.value = response.data.data.url;
     qrCodeKey.value = response.data.data.auth_code;
     refreshPollTimer = setInterval(refreshPollSync, 1000);
@@ -294,7 +295,7 @@ const refreshQRCode = async () => {
 
 const refreshPollSync = async () => {
   try {
-    const response = await axios.get('/api/bilibili/poll/' + qrCodeKey.value);
+    const response = await axios.get(GLOBAL.apiURL + '/bilibili/poll/' + qrCodeKey.value);
     if (response.data.code === 0) {
       biliStatus.value = "登录成功，请直接添加上传任务即可";
       SESSDATAText.value = response.data.data.cookie_info.cookies[0].value;
@@ -580,7 +581,7 @@ const handleSendBUlTaskData = () => {
   }
   selectedItems.value = [];
 
-  axios.post('/api/add-bul-task', inputData)
+  axios.post(GLOBAL.apiURL + '/add-bul-task', inputData)
     .then(response => {
       console.log('已添加上传到哔哩源任务', response);
       console.log(response.data);
@@ -616,7 +617,7 @@ const handleSendBUlTaskData = () => {
 
 const clearBUlTaskList = async () => {
   try {
-    const response = await axios.get('/api/clear-bul-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/clear-bul-task-list');
     console.log("清空任务数据成功");
     console.log(response.data);
     setTimeout(() => {
@@ -637,7 +638,7 @@ const deleteBUlTask = async () => {
   const formData = new FormData();
   formData.append('uuid', selectedTask.value.uuid);
 
-  axios.post('/api/delete-bul-task', formData, {
+  axios.post(GLOBAL.apiURL + '/delete-bul-task', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -679,7 +680,7 @@ const handleFileListData = (data) => {
 }
 const getFileList = async () => {
   try {
-    const response = await axios.get('/api/get-file-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-file-list');
     handleFileListData(response.data);
   } catch (error) {
     console.error("获取文件列表数据失败");
@@ -695,7 +696,7 @@ const handleBUlTaskListData = (data) => {
 }
 const getTaskList = async () => {
   try {
-    const response = await axios.get('/api/get-bul-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-bul-task-list');
     handleBUlTaskListData(response.data)
   } catch (error) {
     console.error("获取上传到哔哩源列表数据失败");

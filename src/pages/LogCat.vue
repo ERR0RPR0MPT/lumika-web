@@ -17,6 +17,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../Common.vue";
 import axios from "axios";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 
@@ -31,7 +32,7 @@ const handleLogCatData = (data) => {
 // 定义函数来获取 LogCat 数据
 const getLogCat = async () => {
   try {
-    const response = await axios.get('/api/get-logcat');
+    const response = await axios.get(GLOBAL.apiURL + '/get-logcat');
     handleLogCatData(response.data)
   } catch (error) {
     console.error("获取 LogCat 数据失败");
@@ -41,7 +42,7 @@ const getLogCat = async () => {
 
 const clearLogCat = async () => {
   try {
-    const response = await axios.get('/api/clear-logcat');
+    const response = await axios.get(GLOBAL.apiURL + '/clear-logcat');
     console.log("清空 LogCat 数据成功");
     console.log(response.data);
   } catch (error) {

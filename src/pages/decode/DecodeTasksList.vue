@@ -180,6 +180,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../../Common.vue";
 import {onBeforeUnmount, onMounted, ref} from 'vue';
 import axios from "axios";
 
@@ -209,12 +210,12 @@ const toggleSelection = (file) => {
 }
 
 const openDownloadURL = (task) => {
-  window.open("/api/dl/decodeOutput/" + task.filename, '_blank');
+  window.open(GLOBAL.apiURL + "/dl/decodeOutput/" + task.filename, '_blank');
 }
 
 const clearGetTaskList = async () => {
   try {
-    const response = await axios.get('/api/clear-get-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/clear-get-task-list');
     console.log("清空任务数据成功");
     console.log(response.data);
     setTimeout(() => {
@@ -235,7 +236,7 @@ const pauseGetTask = async () => {
   const formData = new FormData();
   formData.append('uuid', selectedTask.value.uuid);
 
-  axios.post('/api/pause-get-task', formData, {
+  axios.post(GLOBAL.apiURL + '/pause-get-task', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -265,7 +266,7 @@ const deleteGetTask = async () => {
   const formData = new FormData();
   formData.append('uuid', selectedTask.value.uuid);
 
-  axios.post('/api/delete-get-task', formData, {
+  axios.post(GLOBAL.apiURL + '/delete-get-task', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -348,7 +349,7 @@ const handleSendDecodeTaskData = () => {
   }
   selectedItems.value = [];
 
-  axios.post('/api/add-decode-task', inputData)
+  axios.post(GLOBAL.apiURL + '/add-decode-task', inputData)
     .then(response => {
       console.log('已添加解码任务', response);
       console.log(response.data);
@@ -383,7 +384,7 @@ const handleFileListData = (data) => {
 }
 const getFileList = async () => {
   try {
-    const response = await axios.get('/api/get-file-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-file-list');
     handleFileListData(response.data)
   } catch (error) {
     console.error("获取文件列表数据失败");
@@ -406,7 +407,7 @@ const handleAddTaskListData = (data) => {
 }
 const getTaskList = async () => {
   try {
-    const response = await axios.get('/api/get-get-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-get-task-list');
     handleAddTaskListData(response.data)
   } catch (error) {
     console.error("获取编码列表数据失败");

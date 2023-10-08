@@ -83,6 +83,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../../Common.vue";
 import {ref, watch} from 'vue';
 import axios from "axios";
 
@@ -160,7 +161,7 @@ const sendDlTask = (index, item) => {
   formData.append('baseStr', item.baseStr);
   formData.append('parentDir', "decode");
 
-  axios.post('/api/get-bili-encoded-video-files', formData, {
+  axios.post(GLOBAL.apiURL + '/get-bili-encoded-video-files', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -199,7 +200,7 @@ const sendAllDlTask = () => {
     formData.append('baseStr', item.baseStr);
     formData.append('parentDir', "decode");
 
-    axios.post('/api/get-bili-encoded-video-files', formData, {
+    axios.post(GLOBAL.apiURL + '/get-bili-encoded-video-files', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

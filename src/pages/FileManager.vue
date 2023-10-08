@@ -132,17 +132,17 @@
               </v-card-title>
               <v-img
                 v-if="selectedFile.type === 'file' && extComputed(selectedFile) === 'image'"
-                :src="'/api/dl/'+selectedFile.parentDir+'/'+selectedFile.filename"
-                :lazy-src="'/api/dl/'+selectedFile.parentDir+'/'+selectedFile.filename"
+                :src="GLOBAL.apiURL + '/dl/'+selectedFile.parentDir+'/'+selectedFile.filename"
+                :lazy-src="GLOBAL.apiURL + '/dl/'+selectedFile.parentDir+'/'+selectedFile.filename"
                 aspect-ratio="1"
                 class="grey lighten-2"
               ></v-img>
               <video controls v-if="selectedFile.type === 'file' && extComputed(selectedFile) === 'video'">
-                <source :src="'/api/dl/'+selectedFile.parentDir+'/'+selectedFile.filename" type="video/mp4">
+                <source :src="GLOBAL.apiURL + '/dl/'+selectedFile.parentDir+'/'+selectedFile.filename" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
               <audio controls v-if="selectedFile.type === 'file' && extComputed(selectedFile) === 'audio'">
-                <source :src="'/api/dl/'+selectedFile.parentDir+'/'+selectedFile.filename" type="audio/mpeg">
+                <source :src="GLOBAL.apiURL + '/dl/'+selectedFile.parentDir+'/'+selectedFile.filename" type="audio/mpeg">
                 Your browser does not support the audio tag.
               </audio>
             </v-card>
@@ -214,6 +214,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../Common.vue";
 import axios from "axios";
 import {onBeforeUnmount, onMounted, ref} from 'vue';
 
@@ -287,7 +288,7 @@ const handleEncodeFileUpload = () => {
     formData.append('files', file);
   });
 
-  axios.post('/api/upload/encode', formData, {
+  axios.post(GLOBAL.apiURL + '/upload/encode', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -351,7 +352,7 @@ const handleDecodeFileUpload = () => {
   formData.append('folderName', dirNameInput.value);
   formData.append('parentDir', parentDir.value);
 
-  axios.post('/api/upload/decode', formData, {
+  axios.post(GLOBAL.apiURL + '/upload/decode', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -443,7 +444,7 @@ const deleteFileFromAPI = (file) => {
   formData.append('dir', file.parentDir);
   formData.append('file', file.filename);
 
-  axios.post('/api/delete-file', formData, {
+  axios.post(GLOBAL.apiURL + '/delete-file', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -471,13 +472,13 @@ const deleteFileFromAPI = (file) => {
 };
 
 const openLinkInNewTab = (file) => {
-  window.open("/api/dl/" + file.parentDir + "/" + file.filename, '_blank');
+  window.open(GLOBAL.apiURL + "/dl/" + file.parentDir + "/" + file.filename, '_blank');
 }
 
 // 定义函数来获取文件列表数据
 const getFileList = async () => {
   try {
-    const response = await axios.get('/api/get-file-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-file-list');
     handleDlTaskListData(response.data)
   } catch (error) {
     console.error("获取下载列表数据失败");

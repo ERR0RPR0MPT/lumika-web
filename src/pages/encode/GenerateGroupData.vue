@@ -122,6 +122,7 @@
 </template>
 
 <script setup>
+import GLOBAL from "../../Common.vue";
 import {onBeforeUnmount, onMounted, ref} from 'vue';
 import axios from "axios";
 
@@ -192,7 +193,7 @@ const handleBUlTaskListData = (data) => {
 }
 const getBiliList = async () => {
   try {
-    const response = await axios.get('/api/get-bul-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-bul-task-list');
     handleBUlTaskListData(response.data)
   } catch (error) {
     console.error("获取上传到哔哩源列表数据失败");
@@ -212,7 +213,7 @@ const handleEncodeTaskListData = (data) => {
 }
 const getTaskList = async () => {
   try {
-    const response = await axios.get('/api/get-add-task-list');
+    const response = await axios.get(GLOBAL.apiURL + '/get-add-task-list');
     handleEncodeTaskListData(response.data)
   } catch (error) {
     console.error("获取编码列表数据失败");
