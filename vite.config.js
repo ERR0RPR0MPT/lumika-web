@@ -11,7 +11,7 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
   base: "/ui/",
   build: {
-    outDir: "ui",
+    outDir: "./dist/ui",
   },
   plugins: [
     vue({
