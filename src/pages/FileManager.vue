@@ -94,10 +94,16 @@
             <v-btn prepend-icon="mdi-download" size="x-large" @click="openLinkInNewTab(selectedFile)">
               下载
             </v-btn>
+            <v-btn prepend-icon="mdi-rename" size="x-large" @click="renameFileFromAPI(selectedFile)">
+              重命名
+            </v-btn>
             <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteFileFromAPI(selectedFile)">
               删除
             </v-btn>
           </v-col>
+          <v-text-field v-model="selectedFile.filename" label="名称"></v-text-field>
+          <v-divider></v-divider>
+
           <v-table>
             <thead>
             <tr>
@@ -387,8 +393,8 @@ const extComputed = (file) => {
 };
 
 const showFileDetails = (file) => {
-  getFileList();
   selectedFile.value = file;
+  selectedFile.value.originName = file.filename;
   childDialogVisible.value = true;
 }
 const hideFileDetails = () => {
@@ -464,6 +470,39 @@ const deleteFileFromAPI = (file) => {
       console.error('"' + file.filename + '"删除失败', error);
       console.error(error);
       snackbarText.value = '"' + file.filename + '"删除失败';
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    });
+};
+
+const renameFileFromAPI = (file) => {
+  const formData = new FormData();
+  formData.append('dir', file.parentDir);
+  formData.append('originName', file.originName);
+  formData.append('name', file.filename);
+
+  axios.post(GLOBAL.apiURL + '/rename-file', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log('已重命名为"' + file.filename + '"', response);
+      console.log(response.data);
+      snackbarText.value = '已重命名为"' + file.filename + '"';
+      snackbarFlag.value = true;
+      childDialogVisible.value = false;
+      selectedFile.value = null;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error('重命名失败', error);
+      console.error(error);
+      snackbarText.value = '重命名失败';
       snackbarFlag.value = true;
       setTimeout(() => {
         snackbarFlag.value = false;
