@@ -94,6 +94,9 @@
             <v-btn prepend-icon="mdi-download" size="x-large" @click="openLinkInNewTab(selectedFile)">
               下载
             </v-btn>
+            <v-btn v-if="selectedFile.filename.endsWith('.zip')" prepend-icon="mdi-folder-zip" size="x-large" @click="unzipFileFromAPI(selectedFile)">
+              解压
+            </v-btn>
             <v-btn prepend-icon="mdi-rename" size="x-large" @click="renameFileFromAPI(selectedFile)">
               重命名
             </v-btn>
@@ -476,6 +479,38 @@ const deleteFileFromAPI = (file) => {
       }, 5000);
     });
 };
+
+const unzipFileFromAPI = (file) => {
+  const formData = new FormData();
+  formData.append('dir', file.parentDir);
+  formData.append('file', file.filename);
+
+  axios.post(GLOBAL.apiURL + '/unzip', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log('解压成功', response);
+      console.log(response.data);
+      snackbarText.value = '解压成功';
+      snackbarFlag.value = true;
+      childDialogVisible.value = false;
+      selectedFile.value = null;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error('解压失败', error);
+      console.error(error);
+      snackbarText.value = '解压失败';
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    });
+}
 
 const renameFileFromAPI = (file) => {
   const formData = new FormData();
