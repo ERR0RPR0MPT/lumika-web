@@ -24,7 +24,7 @@
     </v-col>
 
     <v-container v-if="jsonData !== null">
-      <v-card elevation="12" max-height="93vh">
+      <v-card class="mx-auto overflow-y-auto overflow-x-hidden" elevation="12" max-height="93vh">
         <v-card-title>解析结果</v-card-title>
         <v-col cols="auto">
           <v-table>

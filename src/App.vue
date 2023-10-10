@@ -108,6 +108,14 @@ const getApiURL = () => {
 }
 
 onMounted(() => {
+  // 获取用户设定的主题颜色
+  const themeColor = localStorage.getItem('Lumika_Theme');
+  if (themeColor === "null" || themeColor === null) {
+    localStorage.setItem('Lumika_Theme', 'dark');
+    theme.global.name.value = 'dark';
+  } else {
+    theme.global.name.value = themeColor;
+  }
   // 获取后端 API 地址
   getApiURL();
   // 在组件挂载后绑定 resize 事件
@@ -126,6 +134,7 @@ const theme = useTheme()
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
-  toggleThemeMeta()
+  localStorage.setItem('Lumika_Theme', theme.global.name.value);
+  toggleThemeMeta();
 }
 </script>

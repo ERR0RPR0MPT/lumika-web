@@ -146,6 +146,10 @@
                 }}
               </td>
             </tr>
+            <tr v-if="selectedTask.duration !== ''">
+              <td>用时</td>
+              <td>{{ selectedTask.duration }}</td>
+            </tr>
             <tr>
               <td>文件名</td>
               <td>{{ selectedTask.taskInfo.fileNameList[0] }}</td>

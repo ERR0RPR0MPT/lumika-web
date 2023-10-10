@@ -73,7 +73,7 @@
               <v-text-field label="请输入简介(可为空)" v-model="descriptionText"></v-text-field>
               <v-text-field label="请输入标签(使用英文逗号分割)" v-model="tagText"></v-text-field>
               <v-text-field label="请输入分区 id(默认: 232)" v-model="tidText"></v-text-field>
-              <v-text-field label="请选择上传线路(默认: qn)" v-model="uploadLinesText"></v-text-field>
+              <v-text-field label="请选择上传线路(默认: ws)" v-model="uploadLinesText"></v-text-field>
               <v-text-field label="请输入上传线程数(默认: 10)" v-model="threadsText"></v-text-field>
               <v-btn prepend-icon="mdi-check" size="x-large" @click="saveDraftData">
                 保存草稿
@@ -130,7 +130,7 @@
             <v-btn prepend-icon="mdi-arrow-left" size="x-large" @click="hideTaskDetails">
               返回
             </v-btn>
-            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteBUlTask(selectedTask)">
+            <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteBUlTask()">
               删除任务
             </v-btn>
           </v-col>
@@ -164,6 +164,10 @@
                   Math.floor(selectedTask.progressNum) + "%"
                 }}
               </td>
+            </tr>
+            <tr v-if="selectedTask.duration !== ''">
+              <td>用时</td>
+              <td>{{ selectedTask.duration }}</td>
             </tr>
             <tr>
               <td>创建时间</td>
@@ -511,7 +515,7 @@ const handleSendBUlTaskData = () => {
     tidText.value = "232";
   }
   if (uploadLinesText.value === "") {
-    uploadLinesText.value = "qn";
+    uploadLinesText.value = "ws";
   }
   if (threadsText.value === "" || threadsText.value === "null") {
     threadsText.value = "10";

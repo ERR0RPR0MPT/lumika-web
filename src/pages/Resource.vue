@@ -33,8 +33,16 @@
             <td>{{ Math.floor(status.cpuUsagePercent) + '%' }}</td>
           </tr>
           <tr>
+            <td>内存大小</td>
+            <td>{{ status.memUsageTotalAndUsed }}</td>
+          </tr>
+          <tr>
             <td>内存占用</td>
             <td>{{ Math.floor(status.memUsagePercent) + '%' }}</td>
+          </tr>
+          <tr>
+            <td>磁盘大小</td>
+            <td>{{ status.diskUsageTotalAndUsed }}</td>
           </tr>
           <tr>
             <td>磁盘占用</td>
@@ -51,6 +59,14 @@
           <tr>
             <td>下载速度</td>
             <td>{{ status.downloadSpeed }}</td>
+          </tr>
+          <tr>
+            <td>上传总量</td>
+            <td>{{ status.uploadTotal }}</td>
+          </tr>
+          <tr>
+            <td>下载总量</td>
+            <td>{{ status.downloadTotal }}</td>
           </tr>
           </tbody>
         </v-table>
@@ -109,7 +125,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   refresh(); // 首次立即获取数据
-  refreshTimer = setInterval(refresh, 500); // 每隔 500ms 调用一次 fetchData
+  refreshTimer = setInterval(refresh, 1000); // 每隔 1s 调用一次 fetchData
 });
 
 // 在组件销毁之前清除计时器

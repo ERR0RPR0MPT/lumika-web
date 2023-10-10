@@ -101,6 +101,10 @@
               <td>进度</td>
               <td>{{ (Math.floor(selectedTask.progressNum)).toString() + "%" }}</td>
             </tr>
+            <tr v-if="selectedTask.duration !== ''">
+              <td>用时</td>
+              <td>{{ selectedTask.duration }}</td>
+            </tr>
             <tr>
               <td>文件名</td>
               <td>{{ selectedTask.fileName }}</td>
@@ -185,6 +189,10 @@
             <tr>
               <td>进度</td>
               <td>{{ (Math.floor(selectedTask.progressNum)).toString() + "%" }}</td>
+            </tr>
+            <tr v-if="selectedTask.duration !== ''">
+              <td>用时</td>
+              <td>{{ selectedTask.duration }}</td>
             </tr>
             <tr>
               <td>BV/av号</td>

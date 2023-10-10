@@ -124,6 +124,10 @@
               <td>进度</td>
               <td>{{ (Math.floor(selectedTask.progressNum)).toString() + "%" }}</td>
             </tr>
+            <tr v-if="selectedTask.duration !== ''">
+              <td>用时</td>
+              <td>{{ selectedTask.duration }}</td>
+            </tr>
             <tr>
               <td>解码目录</td>
               <td>{{ selectedTask.taskInfo.dirName }}</td>
