@@ -97,7 +97,7 @@
             <v-btn v-if="selectedFile.filename.endsWith('.zip')" prepend-icon="mdi-folder-zip" size="x-large" @click="unzipFileFromAPI(selectedFile)">
               解压
             </v-btn>
-            <v-btn prepend-icon="mdi-rename" size="x-large" @click="renameFileFromAPI(selectedFile)">
+            <v-btn prepend-icon="mdi-rename-box" size="x-large" @click="renameFileFromAPI(selectedFile)">
               重命名
             </v-btn>
             <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteFileFromAPI(selectedFile)">
