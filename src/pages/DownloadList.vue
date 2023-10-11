@@ -135,7 +135,12 @@
             <v-card>
               <v-card-title>运行日志</v-card-title>
               <v-code>
-                <pre>{{ selectedTask.logCat }}</pre>
+                <v-textarea
+                  v-model="selectedTask.logCat"
+                  variant="outlined"
+                  auto-grow
+                  readonly
+                ></v-textarea>
               </v-code>
             </v-card>
           </v-container>
@@ -212,7 +217,12 @@
             <v-card>
               <v-card-title>运行日志</v-card-title>
               <v-code>
-                <pre>{{ selectedTask.logCat }}</pre>
+                <v-textarea
+                  v-model="selectedTask.logCat"
+                  variant="outlined"
+                  auto-grow
+                  readonly
+                ></v-textarea>
               </v-code>
             </v-card>
           </v-container>

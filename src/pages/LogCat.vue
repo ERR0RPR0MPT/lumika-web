@@ -9,9 +9,14 @@
       </v-btn>
     </v-col>
     <v-container>
-      <v-code>
-        <pre>{{ logCatString }}</pre>
-      </v-code>
+      <v-card>
+        <v-textarea
+          v-model="logCatString"
+          variant="outlined"
+          auto-grow
+          readonly
+        ></v-textarea>
+      </v-card>
     </v-container>
   </v-card>
 </template>
