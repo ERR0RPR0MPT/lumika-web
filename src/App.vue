@@ -113,7 +113,7 @@ const getApiURLUserList = () => {
 const getApiURL = () => {
   const l = localStorage.getItem('Lumika_API');
   if (l === "null" || l === null) {
-    const apiUrl = window.location.protocol + '//' + window.location.host + "/api";
+    const apiUrl = "http://localhost:7860/api"
     GLOBAL.apiURL = apiUrl;
     localStorage.setItem('Lumika_API', apiUrl);
   } else {
@@ -121,36 +121,36 @@ const getApiURL = () => {
   }
 }
 
-const getAutoApiURL = async () => {
+const getAutoApiURL = () => {
   // 先检查 Lumika_API 是否能用
   const apiUrl = localStorage.getItem('Lumika_API');
-  if (getAlive(apiUrl)) {
+  if (getAlive(apiUrl, 3000)) {
     GLOBAL.apiURL = apiUrl;
     return;
   }
   // 再检查 Lumika_API_User_List 是否有 API 能用
   const apiUrlUserList = JSON.parse(localStorage.getItem('Lumika_API_User_List'));
   for (let i = 0; i < apiUrlUserList.length; i++) {
-    if (getAlive(apiUrlUserList[i])) {
+    if (getAlive(apiUrlUserList[i], 3000)) {
       GLOBAL.apiURL = apiUrlUserList[i];
       return;
     }
   }
   // 再检查 localhost:7860 是否有 API 能用
-  if (getAlive("http://localhost:7860/api")) {
+  if (getAlive("http://localhost:7860/api", 200)) {
     GLOBAL.apiURL = "http://localhost:7860/api";
     return;
   }
   // 再检查当前 Host 地址的 API 是否能用
   const apiUrlHost = window.location.protocol + '//' + window.location.host + "/api";
-  if (getAlive(apiUrlHost)) {
+  if (getAlive(apiUrlHost, 3000)) {
     GLOBAL.apiURL = apiUrlHost;
     return;
   }
   // 最后检查官方的12个节点的 API 是否能用
   for (let i = 1; i <= 12; i++) {
     const k = "https://weclont-lumika"+i+".hf.space/api"
-    if (getAlive(k)) {
+    if (getAlive(k, 3000)) {
       GLOBAL.apiURL = k;
       return;
     }
@@ -190,9 +190,9 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 });
 
-const getAlive = (url) => {
+const getAlive = (url, t) => {
   try {
-    axios.get(url + '/version');
+    axios.get(url + '/version', { timeout: t });
     return true;
   } catch (error) {
     return false;
