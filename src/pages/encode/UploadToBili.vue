@@ -298,7 +298,7 @@ const refreshQRCode = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 5000);
-    console.error(e);
+    refreshList();
   }
 }
 
@@ -632,6 +632,7 @@ const clearBUlTaskList = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 3000);
+    refreshList();
   } catch (error) {
     console.error("清空任务数据失败");
     console.error(error);
@@ -640,6 +641,7 @@ const clearBUlTaskList = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 5000);
+    refreshList();
   }
 };
 
@@ -661,6 +663,7 @@ const deleteBUlTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error("任务删除失败", error);
@@ -670,6 +673,7 @@ const deleteBUlTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 

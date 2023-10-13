@@ -165,7 +165,7 @@
 
     <v-dialog v-model="dialogVisible1" max-width="500">
       <v-container>
-        <v-card>
+        <v-card class="mx-auto overflow-y-auto overflow-x-hidden" max-height="93vh">
           <v-card-title>从本机上传文件</v-card-title>
           <v-select
             label="上传到"
@@ -185,7 +185,7 @@
 
     <v-dialog v-model="dialogVisible4" max-width="500">
       <v-container>
-        <v-card>
+        <v-card class="mx-auto overflow-y-auto overflow-x-hidden" max-height="93vh">
           <v-card-title>从本机上传已编码的视频目录</v-card-title>
           <v-select
             label="上传到"
@@ -313,6 +313,7 @@ const handleEncodeFileUpload = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      getFileList();
     })
     .catch(error => {
       console.log("上传失败")
@@ -324,6 +325,7 @@ const handleEncodeFileUpload = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      getFileList();
     });
 };
 
@@ -373,6 +375,10 @@ const handleDecodeFileUpload = () => {
       snackbarFlag.value = true;
       dialogVisible4.value = false;
       dirInput.value = null;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+      getFileList();
     })
     .catch(error => {
       console.log("上传失败")
@@ -380,6 +386,10 @@ const handleDecodeFileUpload = () => {
       snackbarText.value = "上传失败";
       snackbarFlag.value = true;
       dirInput.value = null;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+      getFileList();
     });
 };
 
@@ -468,6 +478,7 @@ const deleteFileFromAPI = (file) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      getFileList();
     })
     .catch(error => {
       console.error('"' + file.filename + '"删除失败', error);
@@ -477,6 +488,7 @@ const deleteFileFromAPI = (file) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      getFileList();
     });
 };
 
@@ -500,6 +512,7 @@ const unzipFileFromAPI = (file) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      getFileList();
     })
     .catch(error => {
       console.error('解压失败', error);
@@ -509,6 +522,7 @@ const unzipFileFromAPI = (file) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      getFileList();
     });
 }
 

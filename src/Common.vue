@@ -4,9 +4,11 @@
 
 <script>
 let apiURL = "";
+let apiURLUserList = [];
 export default
 {
-  apiURL
+  apiURL,
+  apiURLUserList,
 }
 </script>
 

@@ -374,6 +374,7 @@ const handleSendURLData = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error('任务创建失败', error);
@@ -383,6 +384,7 @@ const handleSendURLData = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
@@ -424,6 +426,7 @@ const handleSendAVOrBVData = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error('任务创建失败', error);
@@ -433,6 +436,7 @@ const handleSendAVOrBVData = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
@@ -454,6 +458,7 @@ const deleteDlTask = async (uuid) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error("任务删除失败", error);
@@ -463,6 +468,7 @@ const deleteDlTask = async (uuid) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
@@ -494,6 +500,7 @@ const sendDecodeTask = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error('解码任务创建失败', error);
@@ -503,6 +510,7 @@ const sendDecodeTask = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
@@ -561,6 +569,7 @@ const deleteBDlTask = async (uuid) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error("任务删除失败", error);
@@ -570,6 +579,7 @@ const deleteBDlTask = async (uuid) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 

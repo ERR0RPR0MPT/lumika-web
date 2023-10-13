@@ -26,7 +26,7 @@
         </v-btn>
 
         <v-card-text>
-          <v-text-field v-model="apiURLText" label="后端 API 地址"></v-text-field>
+          <v-combobox label="后端 API 地址" v-model="apiURLText" :items="GLOBAL.apiURLUserList"></v-combobox>
           <v-text-field v-model="maxThreadsText" label="编解码最大线程数"></v-text-field>
           <v-text-field v-model="biliDownloadGoRoutinesText" label="从哔哩源下载每P的最大线程数"></v-text-field>
           <v-text-field v-model="biliDownloadsMaxQueueNumText" label="从哔哩源下载最大同时下载分P数"></v-text-field>
@@ -99,6 +99,7 @@ const restartServer = () => {
   setTimeout(() => {
     snackbarFlag.value = false;
   }, 3000);
+  refreshData();
 };
 
 const handleVarSettingsData = (data) => {
@@ -120,17 +121,24 @@ const getVarSettingsConfig = async () => {
 };
 
 const setDefaultVarSettingsConfig = () => {
-  apiURLText.value = window.location.protocol + '//' + window.location.host + "/api";
+  apiURLText.value = "http://localhost:7860/api";
   maxThreadsText.value = "8";
-  biliDownloadGoRoutinesText.value = "16";
-  biliDownloadsMaxQueueNumText.value = "5";
+  biliDownloadGoRoutinesText.value = "4";
+  biliDownloadsMaxQueueNumText.value = "25";
   taskWorkerGoRoutinesText.value = "5";
   dbCrontabSecondsText.value = "10";
+  GLOBAL.apiURLUserList = [
+    GLOBAL.apiURL,
+  ];
 }
 
 const setVarSettingsConfig = async () => {
   GLOBAL.apiURL = apiURLText.value;
   localStorage.setItem('Lumika_API', apiURLText.value);
+  if (!GLOBAL.apiURLUserList.includes(GLOBAL.apiURL)) {
+    GLOBAL.apiURLUserList.push(GLOBAL.apiURL);
+  }
+  localStorage.setItem('Lumika_API_User_List', JSON.stringify(GLOBAL.apiURLUserList));
   const inputData = {
     defaultMaxThreads: parseInt(maxThreadsText.value),
     defaultBiliDownloadGoRoutines: parseInt(biliDownloadGoRoutinesText.value),
@@ -147,6 +155,7 @@ const setVarSettingsConfig = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 3000);
+    refreshData();
   } catch (error) {
     console.error("配置修改失败");
     console.error(error);
@@ -155,6 +164,7 @@ const setVarSettingsConfig = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 5000);
+    refreshData();
   }
 };
 

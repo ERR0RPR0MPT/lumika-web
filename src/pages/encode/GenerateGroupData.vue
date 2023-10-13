@@ -286,9 +286,9 @@ const refreshGroupData = () => {
   };
 }
 
-const copyToClipboard = async (text) => {
+const copyToClipboard = (text) => {
   try {
-    await navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text);
     console.log('内容已成功复制到剪贴板');
     snackbarText.value = "内容已成功复制到剪贴板";
     snackbarFlag.value = true;
@@ -296,13 +296,24 @@ const copyToClipboard = async (text) => {
       snackbarFlag.value = false;
     }, 3000);
   } catch (e) {
-    console.log(e);
-    console.error('无法复制内容到剪贴板');
-    snackbarText.value = "无法复制内容到剪贴板";
-    snackbarFlag.value = true;
-    setTimeout(() => {
-      snackbarFlag.value = false;
-    }, 5000);
+    try {
+      // eslint-disable-next-line no-undef
+      ClipboardInterface.copyToClipboard(text);
+      console.log('内容已成功复制到剪贴板');
+      snackbarText.value = "内容已成功复制到剪贴板";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    } catch (e) {
+      console.log(e);
+      console.error('无法复制内容到剪贴板');
+      snackbarText.value = "无法复制内容到剪贴板";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    }
   }
 };
 

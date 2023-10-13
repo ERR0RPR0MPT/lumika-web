@@ -230,6 +230,7 @@ const clearGetTaskList = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 3000);
+    refreshList();
   } catch (error) {
     console.error("清空任务数据失败");
     console.error(error);
@@ -238,6 +239,7 @@ const clearGetTaskList = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 5000);
+    refreshList();
   }
 };
 
@@ -259,6 +261,7 @@ const pauseGetTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error("执行状态切换失败", error);
@@ -268,6 +271,7 @@ const pauseGetTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
@@ -289,6 +293,7 @@ const deleteGetTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error("任务删除失败", error);
@@ -298,6 +303,7 @@ const deleteGetTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
@@ -368,10 +374,10 @@ const handleSendDecodeTaskData = () => {
       selectedItems.value = [];
       threadNumInputData.value = "";
       baseStrInputData.value = "";
-      refreshList();
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error('解码任务创建失败', error);
@@ -381,6 +387,7 @@ const handleSendDecodeTaskData = () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 

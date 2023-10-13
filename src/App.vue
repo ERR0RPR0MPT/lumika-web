@@ -62,6 +62,7 @@
 import GLOBAL from "./Common.vue";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import {useTheme} from 'vuetify'
+import axios from "axios";
 
 const drawer = ref(true); // Drawer 默认显示
 const isDrawerPermanent = ref(false); // 是否固定 Drawer
@@ -96,6 +97,19 @@ const toggleThemeMeta = () => {
   }
 }
 
+const getApiURLUserList = () => {
+  const l = localStorage.getItem('Lumika_API_User_List');
+  if (l !== "null" && l !== null) {
+    GLOBAL.apiURLUserList = JSON.parse(l);
+  } else {
+    GLOBAL.apiURLUserList = [
+      window.location.protocol + '//' + window.location.host + "/api",
+      "http://localhost:7860/api",
+    ];
+    localStorage.setItem('Lumika_API_User_List', JSON.stringify(GLOBAL.apiURLUserList));
+  }
+}
+
 const getApiURL = () => {
   const l = localStorage.getItem('Lumika_API');
   if (l === "null" || l === null) {
@@ -107,8 +121,45 @@ const getApiURL = () => {
   }
 }
 
-onMounted(() => {
-  // 获取用户设定的主题颜色
+const getAutoApiURL = async () => {
+  // 先检查 Lumika_API 是否能用
+  const apiUrl = localStorage.getItem('Lumika_API');
+  if (getAlive(apiUrl)) {
+    GLOBAL.apiURL = apiUrl;
+    return;
+  }
+  // 再检查 Lumika_API_User_List 是否有 API 能用
+  const apiUrlUserList = JSON.parse(localStorage.getItem('Lumika_API_User_List'));
+  for (let i = 0; i < apiUrlUserList.length; i++) {
+    if (getAlive(apiUrlUserList[i])) {
+      GLOBAL.apiURL = apiUrlUserList[i];
+      return;
+    }
+  }
+  // 再检查 localhost:7860 是否有 API 能用
+  if (getAlive("http://localhost:7860/api")) {
+    GLOBAL.apiURL = "http://localhost:7860/api";
+    return;
+  }
+  // 再检查当前 Host 地址的 API 是否能用
+  const apiUrlHost = window.location.protocol + '//' + window.location.host + "/api";
+  if (getAlive(apiUrlHost)) {
+    GLOBAL.apiURL = apiUrlHost;
+    return;
+  }
+  // 最后检查官方的12个节点的 API 是否能用
+  for (let i = 1; i <= 12; i++) {
+    const k = "https://weclont-lumika"+i+".hf.space/api"
+    if (getAlive(k)) {
+      GLOBAL.apiURL = k;
+      return;
+    }
+  }
+  // 如果没有一个 API 能用
+  GLOBAL.apiURL = "http://localhost:7860/api";
+}
+
+const getThemeColor = () => {
   const themeColor = localStorage.getItem('Lumika_Theme');
   if (themeColor === "null" || themeColor === null) {
     localStorage.setItem('Lumika_Theme', 'dark');
@@ -116,8 +167,17 @@ onMounted(() => {
   } else {
     theme.global.name.value = themeColor;
   }
+}
+
+onMounted(() => {
+  // 获取用户设定的主题颜色
+  getThemeColor();
+  // 获取用户设定的后端 API 地址
+  getApiURLUserList();
   // 获取后端 API 地址
   getApiURL();
+  // 自动选择 API 地址
+  getAutoApiURL();
   // 在组件挂载后绑定 resize 事件
   window.addEventListener('resize', handleResize);
   handleResize(); // 初始化时执行一次
@@ -129,6 +189,15 @@ onBeforeUnmount(() => {
   // 在组件销毁前解绑 resize 事件
   window.removeEventListener('resize', handleResize);
 });
+
+const getAlive = (url) => {
+  try {
+    axios.get(url + '/version');
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 const theme = useTheme()
 

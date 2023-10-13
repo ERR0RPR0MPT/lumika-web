@@ -280,25 +280,34 @@ const toggleSelection = (file) => {
   }
 }
 
-const copyToClipboard = async (text) => {
+const copyToClipboard = (text) => {
   try {
-    await navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text);
     console.log('内容已成功复制到剪贴板');
     snackbarText.value = "内容已成功复制到剪贴板";
     snackbarFlag.value = true;
-    refreshList();
-    childDialogVisible.value = false;
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 3000);
   } catch (e) {
-    console.log(e);
-    console.error('无法复制内容到剪贴板');
-    snackbarText.value = "无法复制内容到剪贴板";
-    snackbarFlag.value = true;
-    setTimeout(() => {
-      snackbarFlag.value = false;
-    }, 3000);
+    try {
+      // eslint-disable-next-line no-undef
+      ClipboardInterface.copyToClipboard(text);
+      console.log('内容已成功复制到剪贴板');
+      snackbarText.value = "内容已成功复制到剪贴板";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    } catch (e) {
+      console.log(e);
+      console.error('无法复制内容到剪贴板');
+      snackbarText.value = "无法复制内容到剪贴板";
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+    }
   }
 };
 
@@ -425,6 +434,7 @@ const clearAddTaskList = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 3000);
+    refreshList();
   } catch (error) {
     console.error("清空任务数据失败");
     console.error(error);
@@ -433,6 +443,7 @@ const clearAddTaskList = async () => {
     setTimeout(() => {
       snackbarFlag.value = false;
     }, 5000);
+    refreshList();
   }
 };
 
@@ -454,6 +465,7 @@ const pauseAddTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error("执行状态切换失败", error);
@@ -463,6 +475,7 @@ const pauseAddTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
@@ -484,6 +497,7 @@ const deleteAddTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      refreshList();
     })
     .catch(error => {
       console.error("任务删除失败", error);
@@ -493,6 +507,7 @@ const deleteAddTask = async () => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      refreshList();
     });
 };
 
