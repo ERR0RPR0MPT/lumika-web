@@ -29,6 +29,10 @@
             <td>{{ status.osName }}</td>
           </tr>
           <tr>
+            <td>运行时间</td>
+            <td>{{ status.executeTime }}</td>
+          </tr>
+          <tr>
             <td>CPU 占用</td>
             <td>{{ Math.floor(status.cpuUsagePercent) + '%' }}</td>
           </tr>

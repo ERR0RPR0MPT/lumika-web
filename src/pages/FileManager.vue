@@ -94,17 +94,38 @@
             <v-btn prepend-icon="mdi-download" size="x-large" @click="openLinkInNewTab(selectedFile)">
               下载
             </v-btn>
-            <v-btn v-if="selectedFile.filename.endsWith('.zip')" prepend-icon="mdi-folder-zip" size="x-large" @click="unzipFileFromAPI(selectedFile)">
+            <v-btn v-if="status.osName === 'linux'" prepend-icon="mdi-folder-zip" size="x-large" @click="zipUIVisible = !zipUIVisible; selectedFile.zipsSize='4g'">
+              压缩
+            </v-btn>
+            <v-btn v-if="selectedFile.filename.endsWith('.zip')" prepend-icon="mdi-folder-zip-outline" size="x-large" @click="unzipFileFromAPI(selectedFile)">
               解压
             </v-btn>
-            <v-btn prepend-icon="mdi-rename-box" size="x-large" @click="renameFileFromAPI(selectedFile)">
+            <v-btn prepend-icon="mdi-content-copy" size="x-large" @click="copyToOtherFolderUIVisible = !copyToOtherFolderUIVisible">
+              复制到
+            </v-btn>
+            <v-btn prepend-icon="mdi-rename-box" size="x-large" @click="renameUIVisible = !renameUIVisible">
               重命名
             </v-btn>
             <v-btn prepend-icon="mdi-delete-forever" size="x-large" @click="deleteFileFromAPI(selectedFile)">
               删除
             </v-btn>
           </v-col>
-          <v-text-field v-model="selectedFile.filename" label="名称"></v-text-field>
+
+          <v-text-field v-if="zipUIVisible" v-model="selectedFile.zipsSize" label="请输入分卷大小(默认: 4g)"></v-text-field>
+          <v-text-field v-if="zipUIVisible" v-model="selectedFile.zipPwd" label="请输入加密密码(可为空)"></v-text-field>
+          <v-btn v-if="zipUIVisible" prepend-icon="mdi-check" size="x-large" @click="zipFileFromAPI(selectedFile)">确定</v-btn>
+
+          <v-text-field v-if="renameUIVisible" v-model="selectedFile.filename" label="请输入重命名的名称"></v-text-field>
+          <v-btn v-if="renameUIVisible" prepend-icon="mdi-check" size="x-large" @click="renameFileFromAPI(selectedFile)">确定</v-btn>
+
+          <v-select
+            v-if="copyToOtherFolderUIVisible"
+            label="复制到"
+            :items="['encode', 'encodeOutput', 'decode', 'decodeOutput']"
+            v-model="parentDir"
+          ></v-select>
+          <v-btn v-if="copyToOtherFolderUIVisible" prepend-icon="mdi-check" size="x-large" @click="copyToOtherFolderFromAPI(selectedFile)">确定</v-btn>
+
           <v-divider></v-divider>
 
           <v-table>
@@ -229,6 +250,9 @@ import {onBeforeUnmount, onMounted, ref} from 'vue';
 
 const dialogVisible1 = ref(false);
 const dialogVisible4 = ref(false);
+const renameUIVisible = ref(false);
+const zipUIVisible = ref(false);
+const copyToOtherFolderUIVisible = ref(false);
 const uploadProgress = ref(0);
 const fileInput = ref(null);
 const dirInput = ref(null);
@@ -242,6 +266,7 @@ const childDialogVisible = ref(false);
 const snackbarFlag = ref(false);
 const snackbarText = ref("");
 const parentDir = ref("");
+const status = ref(null);
 const fileTypeComputed = (type) => {
   return type === 'file';
 };
@@ -261,6 +286,21 @@ const selectDirectory = () => {
   const files = fileInput.value.files;
   if (files.length > 0) {
     this.directory = files[0];
+  }
+};
+
+const handleServerStatusData = (data) => {
+  if (status.value !== data.status) {
+    status.value = data.status
+  }
+}
+const getServerStatus = async () => {
+  try {
+    const response = await axios.get(GLOBAL.apiURL + '/get-server-status');
+    handleServerStatusData(response.data);
+  } catch (error) {
+    console.error("获取 ServerStatus 数据失败");
+    console.error(error);
   }
 };
 
@@ -543,10 +583,12 @@ const renameFileFromAPI = (file) => {
       snackbarText.value = '已重命名为"' + file.filename + '"';
       snackbarFlag.value = true;
       childDialogVisible.value = false;
+      renameUIVisible.value = false
       selectedFile.value = null;
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 3000);
+      getFileList();
     })
     .catch(error => {
       console.error('重命名失败', error);
@@ -556,6 +598,98 @@ const renameFileFromAPI = (file) => {
       setTimeout(() => {
         snackbarFlag.value = false;
       }, 5000);
+      getFileList();
+    });
+};
+
+const zipFileFromAPI = (file) => {
+  const formData = new FormData();
+  formData.append('dir', file.parentDir);
+  formData.append('name', file.filename);
+  formData.append('zipsSize', file.zipsSize);
+  formData.append('zipPwd', file.zipPwd);
+
+  axios.post(GLOBAL.apiURL + '/zip-file', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log('成功压缩"' + file.filename + '"', response);
+      console.log(response.data);
+      snackbarText.value = '成功压缩"' + file.filename + '"';
+      snackbarFlag.value = true;
+      childDialogVisible.value = false;
+      zipUIVisible.value = false
+      selectedFile.value = null;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+      getFileList();
+    })
+    .catch(error => {
+      console.error('压缩失败', error);
+      console.error(error);
+      snackbarText.value = '压缩失败' + error.toString();
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+      getFileList();
+    });
+};
+
+const copyToOtherFolderFromAPI = (file) => {
+  if (file.parentDir === parentDir.value) {
+    snackbarText.value = '目标文件夹与源文件夹相同';
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
+  if (file.parentDir === "") {
+    snackbarText.value = '请选择文件';
+    snackbarFlag.value = true;
+    setTimeout(() => {
+      snackbarFlag.value = false;
+    }, 5000);
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('name', file.filename);
+  formData.append('sourceDir', file.parentDir);
+  formData.append('targetDir', parentDir.value);
+
+  axios.post(GLOBAL.apiURL + '/copy-to-other-folder', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(response => {
+      console.log('成功复制"' + file.filename + '"', response);
+      console.log(response.data);
+      snackbarText.value = '成功复制"' + file.filename + '"';
+      snackbarFlag.value = true;
+      childDialogVisible.value = false;
+      copyToOtherFolderUIVisible.value = false
+      parentDir.value = "";
+      selectedFile.value = null;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+      getFileList();
+    })
+    .catch(error => {
+      console.error('复制失败', error);
+      console.error(error);
+      snackbarText.value = '复制失败';
+      snackbarFlag.value = true;
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 5000);
+      getFileList();
     });
 };
 
@@ -579,6 +713,7 @@ let refreshTimer = null;
 // 在组件创建时启动计时器
 onMounted(() => {
   getFileList(); // 首次立即获取数据
+  getServerStatus(); // 获取后端系统版本
   refreshTimer = setInterval(getFileList, 1000); // 每隔 1000ms 调用一次 fetchData
 });
 

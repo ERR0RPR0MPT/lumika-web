@@ -5,6 +5,14 @@
     </v-card-text>
 
     <v-container>
+      <v-card v-if="latestVersionMsg !== null">
+        <v-card-text>
+          <div class="text-h5">Lumika 最新发行版: {{ latestVersionMsg.latestVersion === "" ? "获取中" : latestVersionMsg.latestVersion }}</div>
+        </v-card-text>
+        <v-card-text>
+          <div class="text-h7">版本说明: {{ latestVersionMsg.latestVersionSummary === "" ? "获取中" : latestVersionMsg.latestVersionSummary }}</div>
+        </v-card-text>
+      </v-card>
       <v-card>
         <v-card-text>
           <div class="text-h5">Lumika 版本: {{ version === "" ? "获取中" : version }}</div>
@@ -13,6 +21,9 @@
           <div class="text-h5">Lumika Web 版本: v{{ webVersion === "" ? "获取失败" : webVersion }}</div>
         </v-card-text>
       </v-card>
+      <v-btn v-if="latestVersionMsg !== null" prepend-icon="mdi-check" size="x-large" @click="updateVersion">
+        升级到最新版
+      </v-btn>
     </v-container>
 
     <v-container>
@@ -41,14 +52,19 @@
       </v-card>
     </v-container>
 
-    <v-col cols="auto">
-      <v-btn prepend-icon="mdi-brightness-4" size="x-large" @click="toggleTheme">
-        {{ theme.global.current.value.dark ? '关闭夜间模式' : '开启夜间模式' }}
-      </v-btn>
-      <v-btn prepend-icon="mdi-restart" size="x-large" @click="restartServer">
-        重启服务
-      </v-btn>
-    </v-col>
+    <v-container>
+      <v-card>
+        <v-col cols="auto">
+          <v-card-title>其他设置</v-card-title>
+          <v-btn prepend-icon="mdi-brightness-4" size="x-large" @click="toggleTheme">
+            {{ theme.global.current.value.dark ? '关闭夜间模式' : '开启夜间模式' }}
+          </v-btn>
+          <v-btn prepend-icon="mdi-restart" size="x-large" @click="restartServer">
+            重启服务
+          </v-btn>
+        </v-col>
+      </v-card>
+    </v-container>
   </v-card>
 
   <v-snackbar
@@ -78,6 +94,7 @@ import axios from "axios";
 const snackbarFlag = ref(false);
 const snackbarText = ref("");
 const version = ref("");
+const latestVersionMsg = ref(null);
 const webVersion = ref("");
 
 const apiURLText = ref("");
@@ -184,8 +201,49 @@ const getVersion = async () => {
   }
 };
 
+const handleLatestVersionData = (data) => {
+  if (latestVersionMsg.value !== data) {
+    latestVersionMsg.value = data;
+  }
+}
+const getLatestVersion = async () => {
+  axios.post(GLOBAL.apiURL + '/get-update')
+    .then(response => {
+      handleLatestVersionData(response.data);
+      console.log('最新版本获取成功', response.data);
+      if (response.data !== version.value) {
+        snackbarText.value = "检测到新版本";
+        snackbarFlag.value = true;
+        setTimeout(() => {
+          snackbarFlag.value = false;
+        }, 3000);
+      }
+    })
+    .catch(error => {
+      console.error('最新版本获取失败', error);
+      console.error(error);
+    });
+};
+
+const updateVersion = async () => {
+  axios.post(GLOBAL.apiURL + '/update')
+    .then(response => {
+      snackbarText.value = "已发送更新请求，请稍后查看更新日志";
+      snackbarFlag.value = true;
+      console.log(response.data)
+      setTimeout(() => {
+        snackbarFlag.value = false;
+      }, 3000);
+    })
+    .catch(error => {
+      console.error('更新请求发送失败', error);
+      console.error(error);
+    });
+};
+
 const refreshData = () => {
   getVersion();
+  getLatestVersion();
   getVarSettingsConfig();
 };
 

@@ -19,7 +19,7 @@
     </v-col>
     <v-col cols="auto">
       <v-text-field v-model="jsonData.nameText" label="请输入资源名称"></v-text-field>
-      <v-text-field v-model="jsonData.summaryText" label="请输入简介"></v-text-field>
+      <v-text-field v-model="jsonData.summaryText" label="请输入简介(可为空)"></v-text-field>
     </v-col>
     <v-col cols="auto">
       <v-btn prepend-icon="mdi-plus" size="x-large" @click="addInput"></v-btn>
@@ -235,14 +235,6 @@ const removeInput = () => {
 const generateGroupData = () => {
   if (jsonData.value.nameText === "") {
     snackbarText.value = "请输入资源名称";
-    snackbarFlag.value = true;
-    setTimeout(() => {
-      snackbarFlag.value = false;
-    }, 5000);
-    return;
-  }
-  if (jsonData.value.summaryText === "") {
-    snackbarText.value = "请输入简介";
     snackbarFlag.value = true;
     setTimeout(() => {
       snackbarFlag.value = false;
