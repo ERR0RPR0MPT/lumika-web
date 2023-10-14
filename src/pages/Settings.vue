@@ -10,7 +10,7 @@
           <div class="text-h5">Lumika 最新发行版: {{ latestVersionMsg.latestVersion === "" ? "获取中" : latestVersionMsg.latestVersion }}</div>
         </v-card-text>
         <v-card-text>
-          <div class="text-h7">版本说明: {{ latestVersionMsg.latestVersionSummary === "" ? "获取中" : latestVersionMsg.latestVersionSummary }}</div>
+          <div class="text-h7">版本说明: {{ latestVersionMsg.latestVersionSummary === "" ? "无" : latestVersionMsg.latestVersionSummary }}</div>
         </v-card-text>
       </v-card>
       <v-card>
@@ -21,7 +21,7 @@
           <div class="text-h5">Lumika Web 版本: v{{ webVersion === "" ? "获取失败" : webVersion }}</div>
         </v-card-text>
       </v-card>
-      <v-btn v-if="latestVersionMsg !== null" prepend-icon="mdi-check" size="x-large" @click="updateVersion">
+      <v-btn v-if="latestVersionMsg.latestVersion !== '' && latestVersionMsg.latestVersion !== null && latestVersionMsg.latestVersion !== version" prepend-icon="mdi-check" size="x-large" @click="updateVersion">
         升级到最新版
       </v-btn>
     </v-container>
