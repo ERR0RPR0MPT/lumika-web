@@ -5,7 +5,7 @@
     </v-card-text>
 
     <v-container>
-      <v-card v-if="latestVersionMsg !== null">
+      <v-card v-if="latestVersionMsg.latestVersion !== '' && latestVersionMsg.latestVersion !== null">
         <v-card-text>
           <div class="text-h5">Lumika 最新发行版: {{ latestVersionMsg.latestVersion === "" ? "获取中" : latestVersionMsg.latestVersion }}</div>
         </v-card-text>
@@ -211,13 +211,6 @@ const getLatestVersion = async () => {
     .then(response => {
       handleLatestVersionData(response.data);
       console.log('最新版本获取成功', response.data);
-      if (response.data !== version.value) {
-        snackbarText.value = "检测到新版本";
-        snackbarFlag.value = true;
-        setTimeout(() => {
-          snackbarFlag.value = false;
-        }, 3000);
-      }
     })
     .catch(error => {
       console.error('最新版本获取失败', error);
