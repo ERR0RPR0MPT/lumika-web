@@ -1,6 +1,6 @@
 {
   "name": "lumika-web",
-  "version": "3.13.3",
+  "version": "3.14.0",
   "private": true,
   "scripts": {
     "dev": "vite",

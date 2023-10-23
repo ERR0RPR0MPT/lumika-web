@@ -5,28 +5,6 @@
     </v-card-text>
 
     <v-container>
-      <v-card v-if="latestVersionMsg.latestVersion !== '' && latestVersionMsg.latestVersion !== null">
-        <v-card-text>
-          <div class="text-h5">Lumika 最新发行版: {{ latestVersionMsg.latestVersion === "" ? "获取中" : latestVersionMsg.latestVersion }}</div>
-        </v-card-text>
-        <v-card-text>
-          <div class="text-h7">版本说明: {{ latestVersionMsg.latestVersionSummary === "" ? "无" : latestVersionMsg.latestVersionSummary }}</div>
-        </v-card-text>
-      </v-card>
-      <v-card>
-        <v-card-text>
-          <div class="text-h5">Lumika 版本: {{ version === "" ? "获取中" : version }}</div>
-        </v-card-text>
-        <v-card-text>
-          <div class="text-h5">Lumika Web 版本: v{{ webVersion === "" ? "获取失败" : webVersion }}</div>
-        </v-card-text>
-      </v-card>
-      <v-btn v-if="latestVersionMsg.latestVersion !== '' && latestVersionMsg.latestVersion !== null && latestVersionMsg.latestVersion !== version" prepend-icon="mdi-check" size="x-large" @click="updateVersion">
-        升级到最新版
-      </v-btn>
-    </v-container>
-
-    <v-container>
       <v-card>
         <v-col cols="auto">
           <v-card-title>配置修改</v-card-title>
@@ -50,6 +28,28 @@
           修改
         </v-btn>
       </v-card>
+    </v-container>
+
+    <v-container>
+      <v-card>
+        <v-card-text>
+          <div class="text-h5">Lumika 最新发行版: {{ latestVersionMsg.latestVersion === "" ? "获取中" : latestVersionMsg.latestVersion }}</div>
+        </v-card-text>
+        <v-card-text>
+          <div class="text-h7">版本说明: {{ latestVersionMsg.latestVersionSummary === "" ? "无" : latestVersionMsg.latestVersionSummary }}</div>
+        </v-card-text>
+      </v-card>
+      <v-card>
+        <v-card-text>
+          <div class="text-h5">Lumika 版本: {{ version === "" ? "获取中" : version }}</div>
+        </v-card-text>
+        <v-card-text>
+          <div class="text-h5">Lumika Web 版本: v{{ webVersion === "" ? "获取失败" : webVersion }}</div>
+        </v-card-text>
+      </v-card>
+      <v-btn v-if="latestVersionMsg.latestVersion !== '' && latestVersionMsg.latestVersion !== null && latestVersionMsg.latestVersion !== version" prepend-icon="mdi-check" size="x-large" @click="updateVersion">
+        升级到最新版
+      </v-btn>
     </v-container>
 
     <v-container>

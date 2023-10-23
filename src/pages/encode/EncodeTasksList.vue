@@ -76,9 +76,14 @@
               <v-text-field label="请输入 K 的值(默认: 81)" v-model="KInputData"></v-text-field>
               <v-text-field label="请输入 MG 的值(默认: 200)" v-model="MGInputData"></v-text-field>
               <v-text-field label="请输入 KG 的值(默认: 130)" v-model="KGInputData"></v-text-field>
-              <v-text-field label="请输入生成视频的分辨率大小(单位: 像素，默认: 32)"
+              <v-select label="请选择编码函数的版本(默认: 5)" :items="['5', '4', '3']" v-model="encodeVersionInputData"></v-select>
+              <v-text-field v-if="encodeVersionInputData === '5'" label="请输入 Ver5ColorGA 的值(默认: 0)" v-model="encodeVer5ColorGAInputData"></v-text-field>
+              <v-text-field v-if="encodeVersionInputData === '5'" label="请输入 Ver5ColorBA 的值(默认: 0)" v-model="encodeVer5ColorBAInputData"></v-text-field>
+              <v-text-field v-if="encodeVersionInputData === '5'" label="请输入 Ver5ColorGB 的值(默认: 255)" v-model="encodeVer5ColorGBInputData"></v-text-field>
+              <v-text-field v-if="encodeVersionInputData === '5'" label="请输入 Ver5ColorBB 的值(默认: 255)" v-model="encodeVer5ColorBBInputData"></v-text-field>
+              <v-text-field label="请输入生成视频的分辨率大小(单位: 像素，默认: 224)"
                             v-model="resolutionInputData"></v-text-field>
-              <v-text-field label="请输入生成视频的帧率(单位: FPS，默认: 24)" v-model="FPSInputData"></v-text-field>
+              <v-text-field label="请输入生成视频的帧率(单位: FPS，默认: 1)" v-model="FPSInputData"></v-text-field>
               <v-text-field label="请输入生成视频的最大长度(单位: 秒，默认: 35990)"
                             v-model="maxDurationInputData"></v-text-field>
               <v-text-field label="请输入编码视频的线程数(默认为 CPU 线程数量)"
@@ -260,6 +265,11 @@ const KInputData = ref("");
 const MGInputData = ref("");
 const KGInputData = ref("");
 const resolutionInputData = ref("");
+const encodeVersionInputData = ref("");
+const encodeVer5ColorGAInputData = ref("");
+const encodeVer5ColorBAInputData = ref("");
+const encodeVer5ColorGBInputData = ref("");
+const encodeVer5ColorBBInputData = ref("");
 const FPSInputData = ref("");
 const maxDurationInputData = ref("");
 const threadNumInputData = ref("");
@@ -361,11 +371,26 @@ const handleSendEncodeTaskData = () => {
   if (KGInputData.value === "") {
     KGInputData.value = "130"
   }
+  if (encodeVersionInputData.value === "") {
+    encodeVersionInputData.value = "5"
+  }
+  if (encodeVer5ColorGAInputData.value === "") {
+    encodeVer5ColorGAInputData.value = "0"
+  }
+  if (encodeVer5ColorBAInputData.value === "") {
+    encodeVer5ColorBAInputData.value = "0"
+  }
+  if (encodeVer5ColorGBInputData.value === "") {
+    encodeVer5ColorGBInputData.value = "255"
+  }
+  if (encodeVer5ColorBBInputData.value === "") {
+    encodeVer5ColorBBInputData.value = "255"
+  }
   if (resolutionInputData.value === "") {
-    resolutionInputData.value = "32"
+    resolutionInputData.value = "224"
   }
   if (FPSInputData.value === "") {
-    FPSInputData.value = "24"
+    FPSInputData.value = "1"
   }
   if (threadNumInputData.value === "") {
     threadNumInputData.value = "0"
@@ -387,6 +412,11 @@ const handleSendEncodeTaskData = () => {
     "outputFPS": parseInt(FPSInputData.value),
     "encodeMaxSeconds": parseInt(maxDurationInputData.value),
     "encodeThread": parseInt(threadNumInputData.value),
+    "encodeVersion": parseInt(encodeVersionInputData.value),
+    "encodeVer5ColorGA": parseInt(encodeVer5ColorGAInputData.value),
+    "encodeVer5ColorBA": parseInt(encodeVer5ColorBAInputData.value),
+    "encodeVer5ColorGB": parseInt(encodeVer5ColorGBInputData.value),
+    "encodeVer5ColorBB": parseInt(encodeVer5ColorBBInputData.value),
     "encodeFFmpegMode": ffmpegPresetInputData.value,
     "defaultSummary": summaryInputData.value
   }
@@ -403,6 +433,11 @@ const handleSendEncodeTaskData = () => {
       MGInputData.value = "";
       KGInputData.value = "";
       resolutionInputData.value = "";
+      encodeVersionInputData.value = "";
+      encodeVer5ColorGAInputData.value = "";
+      encodeVer5ColorBAInputData.value = "";
+      encodeVer5ColorGBInputData.value = "";
+      encodeVer5ColorBBInputData.value = "";
       FPSInputData.value = "";
       maxDurationInputData.value = "";
       threadNumInputData.value = "";

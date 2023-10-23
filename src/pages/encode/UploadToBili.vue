@@ -72,7 +72,7 @@
               <v-text-field label="请输入视频标题" v-model="titleText"></v-text-field>
               <v-text-field label="请输入简介(可为空)" v-model="descriptionText"></v-text-field>
               <v-text-field label="请输入标签(使用英文逗号分割)" v-model="tagText"></v-text-field>
-              <v-text-field label="请输入分区 id(默认: 232)" v-model="tidText"></v-text-field>
+              <v-text-field label="请输入分区 id(默认: 231)" v-model="tidText"></v-text-field>
               <v-text-field label="请选择上传线路(默认: ws)" v-model="uploadLinesText"></v-text-field>
               <v-text-field label="请输入上传线程数(默认: 10)" v-model="threadsText"></v-text-field>
               <v-btn prepend-icon="mdi-check" size="x-large" @click="saveDraftData">
@@ -517,7 +517,7 @@ const handleSendBUlTaskData = () => {
     return;
   }
   if (tidText.value === "") {
-    tidText.value = "232";
+    tidText.value = "231";
   }
   if (uploadLinesText.value === "") {
     uploadLinesText.value = "ws";
