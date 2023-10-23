@@ -24,9 +24,13 @@ Lumika 项目默认启动 Lumika Web 作为前端页面；
 
 ## 教程
 
-新版的前端页面还算浅显易懂，所以暂时还没有教程.
+[Lumika](https://www.bilibili.com/video/BV1V34y1g78f/)
 
-> 这是旧版的视频教程，使用命令行执行，不推荐参考.
+[Lumika Android](https://www.bilibili.com/video/BV1MN4y1C7h8/)
+
+推荐使用 Lumika Web 进行操作.
+
+> 这是旧版的视频教程, 使用命令行执行, 不推荐参考.
 > [BiliBili](https://www.bilibili.com/video/BV1CN4y1X7GQ/)
 
 ## 许可证
